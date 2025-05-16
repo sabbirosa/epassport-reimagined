@@ -1,103 +1,219 @@
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowRight, Calendar, CreditCard, FileCheck, HelpCircle, Info } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="flex flex-col gap-8 py-8 md:py-12">
+      {/* Hero Section */}
+      <section className="relative bg-gradient-to-r from-green-800 to-green-600 text-white py-16 md:py-24">
+        <div className="absolute opacity-10 right-0 top-0 h-full">
+          <Image 
+            src="/passport-bg.png" 
+            alt="Passport Background"
+            width={600} 
+            height={600}
+            className="object-cover h-full"
+          />
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div className="space-y-6">
+              <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
+                Bangladesh e-Passport Portal
+              </h1>
+              <p className="text-lg md:text-xl opacity-90">
+                Apply for your e-Passport online through our secure and convenient portal.
+                Get access to our streamlined application process and appointment scheduling.
+              </p>
+              <div className="pt-4 flex flex-wrap gap-4">
+                <Link href="/apply">
+                  <Button size="lg" className="bg-white text-green-700 hover:bg-gray-100">
+                    Apply Now
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </Link>
+                <Link href="/track">
+                  <Button size="lg" variant="outline" className="bg-transparent text-white border-white hover:bg-green-700">
+                    Track Application
+                  </Button>
+                </Link>
+              </div>
+            </div>
+            <div className="hidden md:block">
+              <Image
+                src="/passport-mockup.png"
+                alt="Bangladesh e-Passport"
+                width={500}
+                height={350}
+                className="rounded-md shadow-2xl"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Services Section */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Services</h2>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            The Bangladesh e-Passport portal provides a range of services to streamline the passport application process.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center text-green-700">
+                <FileCheck className="mr-2 h-5 w-5" />
+                Apply for e-Passport
+              </CardTitle>
+              <CardDescription>Complete your application online</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-600">
+                Apply for a new passport, renew an existing one, or replace a lost passport through our secure online portal.
+              </p>
+            </CardContent>
+            <CardFooter>
+              <Link href="/apply" className="text-green-600 hover:text-green-800 flex items-center">
+                Start Application
+                <ArrowRight className="ml-1 h-4 w-4" />
+              </Link>
+            </CardFooter>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center text-green-700">
+                <Calendar className="mr-2 h-5 w-5" />
+                Schedule Appointment
+              </CardTitle>
+              <CardDescription>Book your biometric appointment</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-600">
+                Schedule a convenient time to visit an enrollment center to provide your biometric data for your e-Passport.
+              </p>
+            </CardContent>
+            <CardFooter>
+              <Link href="/appointments" className="text-green-600 hover:text-green-800 flex items-center">
+                Book Appointment
+                <ArrowRight className="ml-1 h-4 w-4" />
+              </Link>
+            </CardFooter>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center text-green-700">
+                <CreditCard className="mr-2 h-5 w-5" />
+                Fee Payment
+              </CardTitle>
+              <CardDescription>Secure online payment</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-600">
+                Pay your passport application fees securely online using multiple payment methods including cards and mobile banking.
+              </p>
+            </CardContent>
+            <CardFooter>
+              <Link href="/fees" className="text-green-600 hover:text-green-800 flex items-center">
+                View Fee Structure
+                <ArrowRight className="ml-1 h-4 w-4" />
+              </Link>
+            </CardFooter>
+          </Card>
+        </div>
+      </section>
+
+      {/* Requirements Section */}
+      <section className="bg-gray-50 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Application Requirements</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Make sure you have the following items ready before starting your application.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+              <h3 className="text-xl font-medium text-gray-900 mb-4 flex items-center">
+                <Info className="mr-2 h-5 w-5 text-green-600" />
+                Required Documents
+              </h3>
+              <ul className="space-y-3 text-gray-600">
+                <li className="flex items-start">
+                  <span className="text-green-600 mr-2">✓</span>
+                  National ID Card (NID)
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-600 mr-2">✓</span>
+                  Birth Certificate
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-600 mr-2">✓</span>
+                  Previous Passport (if applicable)
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-600 mr-2">✓</span>
+                  Digital Photograph (meeting specifications)
+                </li>
+              </ul>
+              <div className="mt-4">
+                <Link href="/requirements" className="text-green-600 hover:text-green-800 flex items-center text-sm">
+                  View detailed requirements
+                  <ArrowRight className="ml-1 h-3 w-3" />
+                </Link>
+              </div>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+              <h3 className="text-xl font-medium text-gray-900 mb-4 flex items-center">
+                <HelpCircle className="mr-2 h-5 w-5 text-green-600" />
+                Frequently Asked Questions
+              </h3>
+              <div className="space-y-4 text-gray-600">
+                <div>
+                  <p className="font-medium">How long does the application process take?</p>
+                  <p className="text-sm mt-1">The standard processing time is 15 working days after biometric submission.</p>
+                </div>
+                <div>
+                  <p className="font-medium">Can I apply for someone else?</p>
+                  <p className="text-sm mt-1">Yes, guardians can apply for minors. For adults, proper authorization is required.</p>
+                </div>
+                <div>
+                  <p className="font-medium">What if I need my passport urgently?</p>
+                  <p className="text-sm mt-1">Expedited services are available for an additional fee.</p>
+                </div>
+              </div>
+              <div className="mt-4">
+                <Link href="/faq" className="text-green-600 hover:text-green-800 flex items-center text-sm">
+                  View all FAQs
+                  <ArrowRight className="ml-1 h-3 w-3" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
+        <h2 className="text-3xl font-bold text-gray-900 mb-6">Ready to apply for your e-Passport?</h2>
+        <p className="text-gray-600 max-w-2xl mx-auto mb-8">
+          Start your application today and experience our streamlined process designed for your convenience.
+        </p>
+        <Link href="/register">
+          <Button size="lg" className="bg-green-600 hover:bg-green-700">
+            Register Now
+          </Button>
+        </Link>
+      </section>
     </div>
   );
 }
