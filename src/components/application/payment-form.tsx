@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -13,11 +14,14 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useApplication } from "@/lib/context/application-context";
+import { cn } from "@/lib/utils";
 import { paymentSchema, type PaymentValues } from "@/lib/validations/application";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CheckCircle2, CreditCard, Landmark, Smartphone, XCircle } from "lucide-react";
+import { format } from "date-fns";
+import { BanknoteIcon, CalendarIcon, CheckCircle2, CreditCard, FileText, Landmark, Smartphone, XCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -33,6 +37,13 @@ export function PaymentForm() {
     paymentMethod: applicationState.payment.paymentMethod || "credit_card",
     amount,
     agreeToTerms: applicationState.payment.agreeToTerms || false,
+    bankDetails: applicationState.payment.bankDetails || {
+      bankName: "",
+      branchName: "",
+      accountNumber: "",
+      transactionId: "",
+      depositDate: "",
+    },
   };
   
   const form = useForm<PaymentValues>({
@@ -43,9 +54,11 @@ export function PaymentForm() {
   // Simulate payment states
   const [paymentState, setPaymentState] = useState<"idle" | "processing" | "success" | "failed">("idle");
   
-  // Show card details only for credit/debit card payment methods
+  // Watch payment method to conditionally render appropriate form sections
   const paymentMethod = form.watch("paymentMethod");
   const isCardPayment = paymentMethod === "credit_card" || paymentMethod === "debit_card";
+  const isBankTransfer = paymentMethod === "bank_transfer";
+  const isOfflinePayment = paymentMethod === "offline_payment";
 
   // Sync form with context on mount
   useEffect(() => {
@@ -63,8 +76,12 @@ export function PaymentForm() {
       // For demo, payment will be successful
       setPaymentState("success");
       
-      // Update application status
-      updateApplicationStatus("payment_confirmed");
+      // Update application status based on payment method
+      if (isOfflinePayment) {
+        updateApplicationStatus("offline_payment_pending");
+      } else {
+        updateApplicationStatus("payment_confirmed");
+      }
       
       // Wait a bit and proceed to next step
       setTimeout(() => {
@@ -96,17 +113,23 @@ export function PaymentForm() {
         ) : paymentState === "success" ? (
           <div className="flex flex-col items-center justify-center py-12 bg-green-50 rounded-lg border border-green-200">
             <CheckCircle2 className="h-16 w-16 text-green-600 mb-4" />
-            <h3 className="text-xl font-medium text-green-800 mb-2">Payment Successful!</h3>
+            <h3 className="text-xl font-medium text-green-800 mb-2">
+              {isOfflinePayment ? "Payment Information Submitted!" : "Payment Successful!"}
+            </h3>
             <p className="text-green-700 mb-6 text-center max-w-md">
-              Your payment has been processed successfully. Your application is now being processed.
+              {isOfflinePayment 
+                ? "Your offline payment details have been submitted. Please allow 1-2 business days for verification." 
+                : "Your payment has been processed successfully. Your application is now being processed."}
             </p>
             <div className="bg-white rounded-md p-4 border border-green-200 w-full max-w-sm">
               <div className="flex justify-between mb-2">
-                <span className="text-gray-600">Transaction ID:</span>
+                <span className="text-gray-600">
+                  {isOfflinePayment ? "Reference ID:" : "Transaction ID:"}
+                </span>
                 <span className="font-medium">{Math.random().toString(36).substring(2, 12).toUpperCase()}</span>
               </div>
               <div className="flex justify-between mb-2">
-                <span className="text-gray-600">Amount Paid:</span>
+                <span className="text-gray-600">Amount:</span>
                 <span className="font-medium">{amount.toLocaleString()} BDT</span>
               </div>
               <div className="flex justify-between">
@@ -155,7 +178,7 @@ export function PaymentForm() {
                       <RadioGroup
                         onValueChange={field.onChange}
                         defaultValue={field.value}
-                        className="grid grid-cols-1 md:grid-cols-2 gap-4"
+                        className="grid grid-cols-1 md:grid-cols-3 gap-4"
                       >
                         <FormItem className="flex flex-col items-center space-y-3 space-x-0 rounded-md border p-4 cursor-pointer hover:bg-gray-50">
                           <FormControl>
@@ -194,6 +217,16 @@ export function PaymentForm() {
                           <Landmark className={`h-6 w-6 ${field.value === "bank_transfer" ? "text-green-600" : "text-gray-400"}`} />
                           <FormLabel className={`font-normal cursor-pointer ${field.value === "bank_transfer" ? "text-green-600" : ""}`}>
                             Bank Transfer
+                          </FormLabel>
+                        </FormItem>
+                        
+                        <FormItem className="flex flex-col items-center space-y-3 space-x-0 rounded-md border p-4 cursor-pointer hover:bg-gray-50">
+                          <FormControl>
+                            <RadioGroupItem value="offline_payment" className="sr-only" />
+                          </FormControl>
+                          <BanknoteIcon className={`h-6 w-6 ${field.value === "offline_payment" ? "text-green-600" : "text-gray-400"}`} />
+                          <FormLabel className={`font-normal cursor-pointer ${field.value === "offline_payment" ? "text-green-600" : ""}`}>
+                            Offline Payment
                           </FormLabel>
                         </FormItem>
                       </RadioGroup>
@@ -288,6 +321,120 @@ export function PaymentForm() {
                 </div>
               )}
               
+              {(isBankTransfer || isOfflinePayment) && (
+                <div className="border p-4 rounded-md">
+                  <div className="mb-4">
+                    <h4 className="font-medium text-gray-800 mb-1">Bangladesh Bank Payment Information</h4>
+                    <p className="text-sm text-gray-600">Please make your payment to the following bank account and provide the transaction details below:</p>
+                    
+                    <div className="bg-blue-50 p-3 rounded-md mt-3 text-sm">
+                      <p className="mb-1"><span className="font-medium">Account Name:</span> Department of Immigration & Passports</p>
+                      <p className="mb-1"><span className="font-medium">Account Number:</span> 0012345678901</p>
+                      <p className="mb-1"><span className="font-medium">Bank Name:</span> Sonali Bank Ltd.</p>
+                      <p><span className="font-medium">Branch:</span> Bangladesh Secretariat Branch, Dhaka</p>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="bankDetails.bankName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Bank Name</FormLabel>
+                          <FormControl>
+                            <Input placeholder="e.g. Sonali Bank" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="bankDetails.branchName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Branch Name</FormLabel>
+                          <FormControl>
+                            <Input placeholder="e.g. Gulshan Branch" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="bankDetails.transactionId"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Transaction ID/Reference Number</FormLabel>
+                          <FormControl>
+                            <Input placeholder="e.g. TRX123456789" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="bankDetails.depositDate"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col">
+                          <FormLabel>Deposit Date</FormLabel>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  variant={"outline"}
+                                  className={cn(
+                                    "w-full pl-3 text-left font-normal",
+                                    !field.value && "text-muted-foreground"
+                                  )}
+                                >
+                                  {field.value ? (
+                                    format(new Date(field.value), "PPP")
+                                  ) : (
+                                    <span>Pick a date</span>
+                                  )}
+                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                              <Calendar
+                                mode="single"
+                                selected={field.value ? new Date(field.value) : undefined}
+                                onSelect={(date) => field.onChange(date ? format(date, "yyyy-MM-dd") : undefined)}
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  
+                  {isOfflinePayment && (
+                    <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-md">
+                      <div className="flex items-start space-x-2">
+                        <FileText className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
+                        <div>
+                          <h5 className="font-medium text-amber-800">Offline Payment Verification</h5>
+                          <p className="text-sm text-amber-700">
+                            Your application will be on hold until we verify your payment. This process typically takes 1-2 business days.
+                            After confirmation, you'll receive an email notification to schedule your biometric appointment.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+              
               <FormField
                 control={form.control}
                 name="agreeToTerms"
@@ -315,7 +462,9 @@ export function PaymentForm() {
                 <Button type="button" variant="outline" onClick={prevStep}>
                   Back
                 </Button>
-                <Button type="submit">Make Payment</Button>
+                <Button type="submit">
+                  {isOfflinePayment ? "Submit Payment Details" : "Make Payment"}
+                </Button>
               </div>
             </form>
           </Form>

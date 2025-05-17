@@ -105,7 +105,7 @@ export function ApplicationProvider({ children }: { children: ReactNode }) {
   const nextStep = useCallback(() => {
     setApplicationState((prevState) => ({
       ...prevState,
-      currentStep: Math.min(prevState.currentStep + 1, 6),
+      currentStep: Math.min(prevState.currentStep + 1, 7),
     }));
   }, []);
 
@@ -119,7 +119,7 @@ export function ApplicationProvider({ children }: { children: ReactNode }) {
   const goToStep = useCallback((step: number) => {
     setApplicationState((prevState) => ({
       ...prevState,
-      currentStep: Math.max(1, Math.min(step, 6)),
+      currentStep: Math.max(1, Math.min(step, 7)),
     }));
   }, []);
 

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useApplication } from "@/lib/context/application-context";
+import { generateApplicationId } from "@/lib/services/track-service";
 import { AlertCircle, CheckCircle2, Edit2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -25,7 +26,7 @@ export function ReviewForm() {
       updateApplicationStatus("submitted");
       
       // Generate a random application ID
-      const applicationId = `BD-${Math.floor(1000000000 + Math.random() * 9000000000)}`;
+      const applicationId = generateApplicationId();
       
       // Wait a bit and redirect to success page (for demo)
       setTimeout(() => {

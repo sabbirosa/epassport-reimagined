@@ -1,8 +1,8 @@
-import Footer from "@/components/footer";
-import Navbar from "@/components/navbar";
 import { ApplicationProvider } from "@/lib/context/application-context";
+import { AuthProvider } from "@/lib/context/auth-context";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import ClientLayout from "./client-layout";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Bangladesh e-Passport Portal",
-  description: "Official portal for Bangladesh e-Passport application and management",
+  title: "Bangladesh e-Passport Application System",
+  description: "Apply for and track your Bangladesh e-Passport application",
 };
 
 export default function RootLayout({
@@ -30,11 +30,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
-        <ApplicationProvider>
-          <Navbar />
-          <main className="flex-grow">{children}</main>
-          <Footer />
-        </ApplicationProvider>
+        <AuthProvider>
+          <ApplicationProvider>
+            <ClientLayout>
+              {children}
+            </ClientLayout>
+          </ApplicationProvider>
+        </AuthProvider>
       </body>
     </html>
   );

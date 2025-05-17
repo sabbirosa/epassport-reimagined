@@ -1,0 +1,62 @@
+[
+  {
+    "certificateNumber": "BC12345678",
+    "name": "Mohammed Rahman",
+    "fatherName": "Abdul Rahman",
+    "motherName": "Fatima Begum",
+    "dateOfBirth": "1985-06-15",
+    "placeOfBirth": "Dhaka",
+    "gender": "Male",
+    "registrationDate": "1985-07-10",
+    "registrationPlace": "Dhaka North City Corporation",
+    "issuingAuthority": "Bangladesh Birth and Death Registration Authority"
+  },
+  {
+    "certificateNumber": "BC23456789",
+    "name": "Fatima Akter",
+    "fatherName": "Kamal Akter",
+    "motherName": "Rahima Khatun",
+    "dateOfBirth": "1990-08-20",
+    "placeOfBirth": "Chittagong",
+    "gender": "Female",
+    "registrationDate": "1990-09-15",
+    "registrationPlace": "Chittagong City Corporation",
+    "issuingAuthority": "Bangladesh Birth and Death Registration Authority"
+  },
+  {
+    "certificateNumber": "BC34567890",
+    "name": "Abdul Karim",
+    "fatherName": "Mohammad Karim",
+    "motherName": "Amina Begum",
+    "dateOfBirth": "1978-03-10",
+    "placeOfBirth": "Sylhet",
+    "gender": "Male",
+    "registrationDate": "1978-04-05",
+    "registrationPlace": "Sylhet City Corporation",
+    "issuingAuthority": "Bangladesh Birth and Death Registration Authority"
+  },
+  {
+    "certificateNumber": "BC45678901",
+    "name": "Nusrat Jahan",
+    "fatherName": "Ibrahim Jahan",
+    "motherName": "Halima Khatun",
+    "dateOfBirth": "1995-11-29",
+    "placeOfBirth": "Rajshahi",
+    "gender": "Female",
+    "registrationDate": "1995-12-20",
+    "registrationPlace": "Rajshahi City Corporation",
+    "issuingAuthority": "Bangladesh Birth and Death Registration Authority"
+  },
+  {
+    "certificateNumber": "BC56789012",
+    "name": "Kamal Hossain",
+    "fatherName": "Rahim Hossain",
+    "motherName": "Shahida Begum",
+    "dateOfBirth": "1982-07-30",
+    "placeOfBirth": "Khulna",
+    "gender": "Male",
+    "registrationDate": "1982-08-25",
+    "registrationPlace": "Khulna City Corporation",
+    "issuingAuthority": "Bangladesh Birth and Death Registration Authority"
+  }
+] 

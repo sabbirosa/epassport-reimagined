@@ -1,6 +1,7 @@
 "use client";
 
 import { ApplicationProgress } from "@/components/application/application-progress";
+import { AppointmentForm } from "@/components/application/appointment-form";
 import { ContactInfoForm } from "@/components/application/contact-info-form";
 import { DocumentsForm } from "@/components/application/documents-form";
 import { PassportDetailsForm } from "@/components/application/passport-details-form";
@@ -29,7 +30,8 @@ export default function ApplicationPage() {
       {currentStep === 3 && <PassportDetailsForm />}
       {currentStep === 4 && <DocumentsForm />}
       {currentStep === 5 && <PaymentForm />}
-      {currentStep === 6 && <ReviewForm />}
+      {currentStep === 6 && <AppointmentForm />}
+      {currentStep === 7 && <ReviewForm />}
     </div>
   );
 } 

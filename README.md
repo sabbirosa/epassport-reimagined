@@ -1,36 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Bangladesh e-Passport Application System
+
+A modern, user-friendly web application for applying and tracking Bangladesh e-Passport applications.
+
+## Features
+
+- **User Dashboard:** Track application status, view notifications, and access quick actions
+- **Admin Dashboard:** Monitor system metrics, application queue, and user statistics
+- **Profile Management:** Update personal information and security settings
+- **Application Tracking:** Real-time status updates with visual progress indicators
+- **Document Management:** Upload, manage, and track verification status of required documents
+- **Document Verification:** Admin interface for reviewing and approving user submitted documents
+- **Server Monitoring:** Track CPU load, memory usage, and other system metrics
+
+## Technology Stack
+
+- **Framework:** Next.js with TypeScript
+- **UI Components:** Tailwind CSS with shadcn UI
+- **Form Handling:** React Hook Form with Zod validation
+- **Icons:** Lucide React
 
 ## Getting Started
 
-First, run the development server:
+1. Clone the repository
+2. Install dependencies with `npm install`
+3. Run the development server with `npm run dev`
+4. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Project Structure
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- `/src/app` - Application routes and pages
+- `/src/components` - Reusable UI components
+- `/src/lib` - Utilities and services
+- `/public` - Static assets
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## License
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+[MIT](LICENSE)

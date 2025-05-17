@@ -131,6 +131,16 @@ export default function ApplicationSuccessPage() {
           </div>
           
           <div>
+            <p className="text-gray-600 text-sm">Estimated Delivery</p>
+            <p className="font-medium">{(() => {
+              // Calculate estimated delivery date (3 weeks from submission)
+              const estimatedDate = new Date(dates.submissionDate);
+              estimatedDate.setDate(estimatedDate.getDate() + 21);
+              return estimatedDate.toLocaleDateString();
+            })()}</p>
+          </div>
+          
+          <div>
             <p className="text-gray-600 text-sm">Current Status</p>
             <p className="font-medium">Submitted</p>
           </div>
@@ -145,7 +155,7 @@ export default function ApplicationSuccessPage() {
       </div>
       
       <div className="flex flex-wrap gap-4 justify-center">
-        <Link href="/track">
+        <Link href={`/track?id=${applicationId}`}>
           <Button variant="outline">Track Application</Button>
         </Link>
         <Link href="/">

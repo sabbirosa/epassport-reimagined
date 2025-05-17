@@ -1,168 +1,171 @@
 "use client";
 
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
 import {
     Form,
     FormControl,
     FormField,
     FormItem,
     FormLabel,
-    FormMessage,
+    FormMessage
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { loginSchema, type LoginFormValues } from "@/lib/validations/auth";
+import { useAuth } from "@/lib/context/auth-context";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+// Form validation schema
+const loginSchema = z.object({
+  email: z.string().email("Please enter a valid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+});
 
 export default function LoginPage() {
+  const { login, isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
-  const [formStatus, setFormStatus] = useState<{
-    status: "idle" | "loading" | "error";
-    message?: string;
-  }>({ status: "idle" });
-
-  const form = useForm<LoginFormValues>({
+  const [error, setError] = useState<string | null>(null);
+  
+  // Form setup
+  const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
       password: "",
-      rememberMe: false,
     },
   });
-
-  async function onSubmit(data: LoginFormValues) {
-    setFormStatus({ status: "loading" });
+  
+  // If already authenticated, redirect to dashboard
+  useEffect(() => {
+    if (isAuthenticated && !isLoading) {
+      router.push("/dashboard");
+    }
+  }, [isAuthenticated, isLoading, router]);
+  
+  // Handle form submission
+  const onSubmit = async (values: z.infer<typeof loginSchema>) => {
+    setError(null);
     
     try {
-      // In a real application, we would submit to an API
-      // Simulating API call with a timeout
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const success = await login(values.email, values.password);
       
-      console.log("Login data:", data);
-      
-      // For demo, we'll just simulate a successful login
-      router.push("/");
-      
-    } catch (error) {
-      console.error("Login error:", error);
-      setFormStatus({ 
-        status: "error", 
-        message: "Invalid email or password. Please try again." 
-      });
+      if (success) {
+        router.push("/dashboard");
+      } else {
+        setError("Invalid email or password. Please try again.");
+      }
+    } catch (err) {
+      setError("An error occurred during login. Please try again.");
+      console.error(err);
     }
+  };
+  
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <p>Loading...</p>
+        </div>
+      </div>
+    );
   }
-
+  
   return (
-    <div className="container mx-auto py-10 px-4 max-w-md">
-      <Card className="w-full">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">Login to your account</CardTitle>
-          <CardDescription>
-            Enter your credentials to access e-Passport services
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input type="email" placeholder="Enter your email" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input type="password" placeholder="••••••••" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <div className="flex items-center justify-between">
+    <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className="w-full max-w-md p-4">
+        <Card>
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-2xl font-bold text-center">
+              Login to e-Passport
+            </CardTitle>
+            <CardDescription className="text-center">
+              Enter your email and password to access your account
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {error && (
+              <Alert variant="destructive" className="mb-4">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+            
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <FormField
                   control={form.control}
-                  name="rememberMe"
+                  name="email"
                   render={({ field }) => (
-                    <FormItem className="flex flex-row items-center space-x-2 space-y-0">
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <input
-                          type="checkbox"
-                          className="h-4 w-4 border-gray-300 rounded"
-                          checked={field.value}
-                          onChange={field.onChange}
+                        <Input 
+                          placeholder="Enter your email" 
+                          type="email" 
+                          {...field} 
                         />
                       </FormControl>
-                      <FormLabel className="text-sm font-normal cursor-pointer">Remember me</FormLabel>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
                 
-                <Link href="/forgot-password" className="text-sm text-green-600 hover:underline">
-                  Forgot password?
-                </Link>
-              </div>
-              
-              {formStatus.status === "error" && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-md flex items-start gap-3">
-                  <AlertCircle className="h-5 w-5 text-red-600 mt-0.5" />
-                  <div>
-                    <p className="text-red-700 text-sm">{formStatus.message}</p>
-                  </div>
-                </div>
-              )}
-              
-              <Button 
-                type="submit" 
-                className="w-full bg-green-600 hover:bg-green-700"
-                disabled={formStatus.status === "loading"}
-              >
-                {formStatus.status === "loading" ? "Logging in..." : "Login"}
-              </Button>
-            </form>
-          </Form>
-        </CardContent>
-        <CardFooter className="flex justify-center border-t p-4">
-          <div className="text-sm text-gray-600">
-            Don't have an account?{" "}
-            <Link href="/register" className="text-green-600 hover:underline font-medium">
-              Register
-            </Link>
-          </div>
-        </CardFooter>
-      </Card>
-      
-      <div className="mt-8 p-4 bg-gray-50 border rounded-md">
-        <h3 className="text-center text-gray-700 font-medium mb-2">Demo Access</h3>
-        <p className="text-center text-gray-600 text-sm mb-3">
-          For demonstration purposes, you can use any valid email and password
-        </p>
-        <div className="grid grid-cols-2 gap-2 text-sm text-gray-700">
-          <div className="bg-white p-2 rounded border">
-            <span className="font-medium">Email:</span> demo@example.com
-          </div>
-          <div className="bg-white p-2 rounded border">
-            <span className="font-medium">Password:</span> Password123!
-          </div>
-        </div>
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="Enter your password" 
+                          type="password" 
+                          {...field} 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+                  {form.formState.isSubmitting ? "Logging in..." : "Login"}
+                </Button>
+              </form>
+            </Form>
+            
+            <div className="mt-4 text-center text-sm">
+              <Link href="/forgot-password" className="text-blue-600 hover:underline">
+                Forgot password?
+              </Link>
+            </div>
+          </CardContent>
+          <CardFooter className="flex flex-col space-y-4">
+            <div className="text-center text-sm">
+              <span className="text-gray-500">Don't have an account? </span>
+              <Link href="/register" className="text-blue-600 hover:underline">
+                Register
+              </Link>
+            </div>
+            
+            <div className="text-xs text-center text-gray-500">
+              <p>Demo Credentials:</p>
+              <p>User: user@example.com / password123</p>
+              <p>Admin: admin@example.com / admin123</p>
+            </div>
+          </CardFooter>
+        </Card>
       </div>
     </div>
   );

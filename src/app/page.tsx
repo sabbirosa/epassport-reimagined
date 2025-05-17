@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, Calendar, CreditCard, FileCheck, HelpCircle, Info } from "lucide-react";
+import { ArrowRight, Calendar, CheckCircle, CreditCard, FileCheck, HelpCircle, Info } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -213,6 +213,46 @@ export default function Home() {
             Register Now
           </Button>
         </Link>
+      </section>
+
+      {/* Tracking Section */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">Track Your Application</h2>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            Check the status of your existing application using your application ID
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 relative overflow-hidden">
+            <div className="absolute inset-0 bg-green-600 opacity-10"></div>
+            <div className="relative">
+              <CheckCircle className="h-8 w-8 text-green-600 mb-3" />
+              <h3 className="text-xl font-semibold mb-2">Track Application</h3>
+              <p className="text-gray-600 mb-4">
+                Check the status of your existing application using your application ID
+              </p>
+              <Link href="/track">
+                <Button>Track Status</Button>
+              </Link>
+            </div>
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 relative overflow-hidden">
+            <div className="absolute inset-0 bg-blue-600 opacity-10"></div>
+            <div className="relative">
+              <HelpCircle className="h-8 w-8 text-blue-600 mb-3" />
+              <h3 className="text-xl font-semibold mb-2">Passport Help</h3>
+              <p className="text-gray-600 mb-4">
+                Need help with your application or have questions about the process?
+              </p>
+              <Link href="/faq">
+                <Button variant="outline">View FAQs</Button>
+              </Link>
+            </div>
+          </div>
+        </div>
       </section>
     </div>
   );

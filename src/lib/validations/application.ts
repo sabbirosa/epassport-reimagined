@@ -112,13 +112,25 @@ export const documentsSchema = z.object({
 // Payment Schema
 export const paymentSchema = z.object({
   paymentMethod: z
-    .enum(["credit_card", "debit_card", "mobile_banking", "bank_transfer"], { 
+    .enum(["credit_card", "debit_card", "mobile_banking", "bank_transfer", "offline_payment"], { 
       message: "Please select a payment method" 
     }),
   amount: z.number().min(0),
   agreeToTerms: z.boolean().refine(val => val === true, {
     message: "You must agree to the terms and conditions"
-  })
+  }),
+  // Bank details for offline payment
+  bankDetails: z.object({
+    bankName: z.string().optional(),
+    branchName: z.string().optional(),
+    accountNumber: z.string().optional(),
+    transactionId: z.string().optional(),
+    depositDate: z.string().optional(),
+  }).optional(),
+  // Appointment details
+  appointmentDate: z.string().optional(),
+  appointmentTime: z.string().optional(),
+  appointmentLocation: z.string().optional(),
 });
 
 // Combined application schema
@@ -133,12 +145,15 @@ export const applicationSchema = z.object({
     "submitted",
     "processing",
     "payment_pending",
+    "offline_payment_pending",
     "payment_confirmed",
     "appointment_scheduled",
     "biometrics_completed",
-    "under_review",
     "approved",
     "rejected",
+    "pending_final_approval",
+    "passport_in_queue",
+    "ready_for_delivery",
     "delivered"
   ]).default("draft"),
   createdAt: z.date().default(() => new Date()),

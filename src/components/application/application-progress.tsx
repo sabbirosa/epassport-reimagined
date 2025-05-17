@@ -11,7 +11,8 @@ const steps = [
   { id: 3, name: "Passport Options" },
   { id: 4, name: "Documents" },
   { id: 5, name: "Payment" },
-  { id: 6, name: "Review & Submit" },
+  { id: 6, name: "Appointment" },
+  { id: 7, name: "Review & Submit" },
 ];
 
 export function ApplicationProgress({ className }: { className?: string }) {

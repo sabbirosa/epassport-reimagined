@@ -1,0 +1,67 @@
+[
+  {
+    "nidNumber": "1234567890",
+    "name": "Mohammed Rahman",
+    "fatherName": "Abdul Rahman",
+    "motherName": "Fatima Begum",
+    "dateOfBirth": "1985-06-15",
+    "placeOfBirth": "Dhaka",
+    "gender": "Male",
+    "permanentAddress": "123 Main Street, Banani, Dhaka",
+    "bloodGroup": "O+",
+    "issueDate": "2015-08-10",
+    "expiryDate": "2025-08-09"
+  },
+  {
+    "nidNumber": "2345678901",
+    "name": "Fatima Akter",
+    "fatherName": "Kamal Akter",
+    "motherName": "Rahima Khatun",
+    "dateOfBirth": "1990-08-20",
+    "placeOfBirth": "Chittagong",
+    "gender": "Female",
+    "permanentAddress": "456 Park Road, Khulshi, Chittagong",
+    "bloodGroup": "A+",
+    "issueDate": "2016-05-12",
+    "expiryDate": "2026-05-11"
+  },
+  {
+    "nidNumber": "3456789012",
+    "name": "Abdul Karim",
+    "fatherName": "Mohammad Karim",
+    "motherName": "Amina Begum",
+    "dateOfBirth": "1978-03-10",
+    "placeOfBirth": "Sylhet",
+    "gender": "Male",
+    "permanentAddress": "789 Lake View, Uposhohor, Sylhet",
+    "bloodGroup": "B+",
+    "issueDate": "2012-11-05",
+    "expiryDate": "2022-11-04"
+  },
+  {
+    "nidNumber": "4567890123",
+    "name": "Nusrat Jahan",
+    "fatherName": "Ibrahim Jahan",
+    "motherName": "Halima Khatun",
+    "dateOfBirth": "1995-11-25",
+    "placeOfBirth": "Rajshahi",
+    "gender": "Female",
+    "permanentAddress": "101 Green Road, Boalia, Rajshahi",
+    "bloodGroup": "AB+",
+    "issueDate": "2018-02-18",
+    "expiryDate": "2028-02-17"
+  },
+  {
+    "nidNumber": "5678901234",
+    "name": "Kamal Hossain",
+    "fatherName": "Rahim Hossain",
+    "motherName": "Shahida Begum",
+    "dateOfBirth": "1982-07-30",
+    "placeOfBirth": "Khulna",
+    "gender": "Male",
+    "permanentAddress": "202 River Side, Sonadanga, Khulna",
+    "bloodGroup": "O-",
+    "issueDate": "2014-09-22",
+    "expiryDate": "2024-09-21"
+  }
+] 
