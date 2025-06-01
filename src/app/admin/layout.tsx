@@ -12,7 +12,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarProvider,
-  SidebarTrigger
+  SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { useAuth } from "@/lib/context/auth-context";
 import {
@@ -23,7 +23,7 @@ import {
   HelpCircle,
   LogOut,
   Settings,
-  Users
+  Users,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -94,7 +94,9 @@ export default function AdminLayout({
                   </div>
                   <div className="font-semibold text-lg">BD e-Passport</div>
                 </div>
-                <div className="text-sm text-muted-foreground font-semibold text-green-700">Admin Portal</div>
+                <div className="text-sm font-semibold text-green-700">
+                  Admin Portal
+                </div>
                 <SidebarTrigger className="absolute top-4 right-2" />
               </SidebarHeader>
 
@@ -103,11 +105,13 @@ export default function AdminLayout({
                   {sidebarItems.map((item) => {
                     // Check if the current path starts with the menu item's href
                     // This handles active state for nested routes
-                    const isActive = 
-                      pathname === item.href || 
-                      (pathname?.startsWith(item.href) && item.href !== '/admin') ||
-                      (item.href === '/admin/dashboard' && pathname === '/admin');
-                    
+                    const isActive =
+                      pathname === item.href ||
+                      (pathname?.startsWith(item.href) &&
+                        item.href !== "/admin") ||
+                      (item.href === "/admin/dashboard" &&
+                        pathname === "/admin");
+
                     return (
                       <SidebarMenuItem key={item.href}>
                         <SidebarMenuButton
@@ -115,7 +119,10 @@ export default function AdminLayout({
                           isActive={isActive}
                           tooltip={item.title}
                         >
-                          <Link href={item.href} className="flex items-center w-full">
+                          <Link
+                            href={item.href}
+                            className="flex items-center w-full"
+                          >
                             <item.icon className="mr-2 h-4 w-4" />
                             <span>{item.title}</span>
                           </Link>
@@ -129,17 +136,24 @@ export default function AdminLayout({
               <SidebarFooter className="p-4 border-t bg-white">
                 <div className="flex items-center space-x-2 mb-4">
                   <Avatar className="h-9 w-9 bg-green-100 text-green-700">
-                    <AvatarImage src="/placeholder-avatar.jpg" alt={user?.name || "Admin"} />
+                    <AvatarImage
+                      src="/placeholder-avatar.jpg"
+                      alt={user?.name || "Admin"}
+                    />
                     <AvatarFallback>A</AvatarFallback>
                   </Avatar>
                   <div className="space-y-0.5">
-                    <div className="text-sm font-semibold">{user?.name || "Admin User"}</div>
-                    <div className="text-xs text-muted-foreground">{user?.email || "admin@example.com"}</div>
+                    <div className="text-sm font-semibold">
+                      {user?.name || "Admin User"}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {user?.email || "admin@example.com"}
+                    </div>
                   </div>
                 </div>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
+                <Button
+                  variant="outline"
+                  size="sm"
                   onClick={handleLogout}
                   className="w-full flex items-center justify-center"
                 >
@@ -148,12 +162,10 @@ export default function AdminLayout({
                 </Button>
               </SidebarFooter>
             </Sidebar>
-            
+
             <div className="flex-1 overflow-auto flex flex-col">
               <div className="flex-1 p-6">
-                <div className="mx-auto max-w-full">
-                  {children}
-                </div>
+                <div className="mx-auto max-w-full">{children}</div>
               </div>
             </div>
           </div>
@@ -161,4 +173,4 @@ export default function AdminLayout({
       </div>
     </ProtectedRoute>
   );
-} 
+}

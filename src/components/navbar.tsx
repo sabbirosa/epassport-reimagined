@@ -3,15 +3,26 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/lib/context/auth-context";
-import { BarChart, Calendar, FileCheck, Home, LogOut, Menu, Search, User, X } from "lucide-react";
+import {
+  BarChart,
+  Calendar,
+  FileCheck,
+  Home,
+  LogOut,
+  Menu,
+  Search,
+  User,
+  X,
+} from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -20,40 +31,60 @@ export default function Navbar() {
   const { user, logout, isAuthenticated } = useAuth();
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-  
+
   // Check if user is admin
   const isAdmin = user?.role === "admin";
-  
+
   // Handle logout
   const handleLogout = () => {
     logout();
     router.push("/");
   };
-  
+
   // Navigation items
   const publicNavItems = [
     { name: "Home", href: "/", icon: <Home className="h-4 w-4 mr-2" /> },
   ];
-  
+
   const authNavItems = [
-    { name: "Apply", href: "/apply", icon: <FileCheck className="h-4 w-4 mr-2" /> },
-    { name: "Track", href: "/track", icon: <Search className="h-4 w-4 mr-2" /> },
-    { name: "Appointments", href: "/appointments", icon: <Calendar className="h-4 w-4 mr-2" /> },
+    {
+      name: "Apply",
+      href: "/apply",
+      icon: <FileCheck className="h-4 w-4 mr-2" />,
+    },
+    {
+      name: "Track",
+      href: "/track",
+      icon: <Search className="h-4 w-4 mr-2" />,
+    },
+    {
+      name: "Appointments",
+      href: "/appointments",
+      icon: <Calendar className="h-4 w-4 mr-2" />,
+    },
   ];
-  
+
   // Determine which nav items to display
-  const navItems = [...publicNavItems, ...(isAuthenticated ? authNavItems : [])];
+  const navItems = [
+    ...publicNavItems,
+    ...(isAuthenticated ? authNavItems : []),
+  ];
 
   return (
     <nav className="bg-white border-b border-gray-200 py-3 px-4 md:px-6 lg:px-8 sticky top-0 z-10 shadow-sm">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <div className="flex items-center">
           <Link href="/" className="flex items-center">
-            <div className="relative h-10 w-10 mr-2">
-              <div className="absolute inset-0 rounded-full bg-green-600"></div>
-              <div className="absolute inset-[2px] rounded-full bg-red-600"></div>
-            </div>
-            <span className="text-lg font-semibold hidden md:block">BD e-Passport</span>
+            <Image
+              src="/e-passport-logo-right-sm.png"
+              alt="BD e-Passport Logo"
+              width={40}
+              height={40}
+              className="h-10 w-10 mr-2"
+            />
+            <span className="text-lg font-semibold hidden md:block">
+              E-Passport
+            </span>
           </Link>
         </div>
 
@@ -75,9 +106,15 @@ export default function Navbar() {
           {isAuthenticated ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                <Button
+                  variant="ghost"
+                  className="relative h-8 w-8 rounded-full"
+                >
                   <Avatar className="h-8 w-8">
-                    <AvatarImage src="/placeholder-avatar.jpg" alt={user?.name || "User"} />
+                    <AvatarImage
+                      src="/placeholder-avatar.jpg"
+                      alt={user?.name || "User"}
+                    />
                     <AvatarFallback>{user?.name?.[0] || "U"}</AvatarFallback>
                   </Avatar>
                 </Button>
@@ -197,4 +234,4 @@ export default function Navbar() {
       )}
     </nav>
   );
-} 
+}
