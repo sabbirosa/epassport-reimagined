@@ -13,7 +13,7 @@ import {
 import { useAuth } from "@/lib/context/auth-context";
 import {
   BarChart,
-  Calendar,
+  // Calendar,
   FileCheck,
   Home,
   LogOut,
@@ -57,11 +57,11 @@ export default function Navbar() {
       href: "/track",
       icon: <Search className="h-4 w-4 mr-2" />,
     },
-    {
-      name: "Appointments",
-      href: "/appointments",
-      icon: <Calendar className="h-4 w-4 mr-2" />,
-    },
+    // {
+    //   name: "Appointments",
+    //   href: "/appointments",
+    //   icon: <Calendar className="h-4 w-4 mr-2" />,
+    // },
   ];
 
   // Determine which nav items to display

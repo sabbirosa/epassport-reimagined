@@ -25,6 +25,7 @@ import {
   Settings,
   Users,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -87,16 +88,26 @@ export default function AdminLayout({
           <div className="flex h-screen overflow-hidden">
             <Sidebar className="border-r">
               <SidebarHeader className="p-4 border-b bg-white">
-                <div className="flex items-center space-x-2">
-                  <div className="relative h-8 w-8">
-                    <div className="absolute inset-0 rounded-full bg-green-600"></div>
-                    <div className="absolute inset-[2px] rounded-full bg-red-600"></div>
+                <Link
+                  href="/dashboard"
+                  className="flex items-center space-x-2 h-10"
+                >
+                  <Image
+                    src="/e-passport-logo-right-sm.png"
+                    alt="BD e-Passport Logo"
+                    width={40}
+                    height={40}
+                    className="h-10 w-10 mr-2"
+                  />
+                  <div>
+                    <span className="text-lg font-semibold hidden md:block">
+                      E-Passport
+                    </span>
+                    <span className="text-sm font-semibold text-green-700">
+                      Admin Dashboard
+                    </span>
                   </div>
-                  <div className="font-semibold text-lg">BD e-Passport</div>
-                </div>
-                <div className="text-sm font-semibold text-green-700">
-                  Admin Portal
-                </div>
+                </Link>
                 <SidebarTrigger className="absolute top-4 right-2" />
               </SidebarHeader>
 

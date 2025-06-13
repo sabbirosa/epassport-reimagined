@@ -1,15 +1,15 @@
 "use client";
 
 import {
-    BarChart,
-    Calendar,
-    Clock,
-    FileCheck,
-    FileText,
-    HelpCircle,
-    LogOut,
-    Settings,
-    User,
+  BarChart,
+  Calendar,
+  Clock,
+  FileCheck,
+  FileText,
+  HelpCircle,
+  LogOut,
+  Settings,
+  User,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -18,16 +18,17 @@ import * as React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
-    Sidebar,
-    SidebarContent,
-    SidebarFooter,
-    SidebarHeader,
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
-    SidebarRail,
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarRail,
 } from "@/components/ui/sidebar";
 import { useAuth } from "@/lib/context/auth-context";
+import Image from "next/image";
 
 const sidebarItems = [
   {
@@ -87,15 +88,28 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader className="p-4 border-b bg-white">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5">
-              <Link href="/dashboard" className="flex items-center space-x-2">
-                <div className="relative h-8 w-8">
-                  <div className="absolute inset-0 rounded-full bg-green-600"></div>
-                  <div className="absolute inset-[2px] rounded-full bg-red-600"></div>
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-base font-semibold">BD e-Passport</span>
-                  <span className="text-xs text-muted-foreground">User Dashboard</span>
+            <SidebarMenuButton
+              asChild
+              className="data-[slot=sidebar-menu-button]:!p-1.5"
+            >
+              <Link
+                href="/dashboard"
+                className="flex items-center space-x-2 h-10"
+              >
+                <Image
+                  src="/e-passport-logo-right-sm.png"
+                  alt="BD e-Passport Logo"
+                  width={40}
+                  height={40}
+                  className="h-10 w-10 mr-2"
+                />
+                <div>
+                  <span className="text-lg font-semibold hidden md:block">
+                    E-Passport
+                  </span>
+                  <span className="text-sm font-semibold text-green-700">
+                    User Dashboard
+                  </span>
                 </div>
               </Link>
             </SidebarMenuButton>
@@ -108,11 +122,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           {sidebarItems.map((item) => {
             // Check if the current path starts with the menu item's href
             // This handles active state for nested routes
-            const isActive = 
-              pathname === item.href || 
-              (pathname?.startsWith(item.href) && item.href !== '/dashboard') ||
-              (item.href === '/dashboard' && pathname === '/dashboard');
-            
+            const isActive =
+              pathname === item.href ||
+              (pathname?.startsWith(item.href) && item.href !== "/dashboard") ||
+              (item.href === "/dashboard" && pathname === "/dashboard");
+
             return (
               <SidebarMenuItem key={item.href}>
                 <SidebarMenuButton
@@ -134,7 +148,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarFooter className="p-4 border-t bg-white">
         <div className="flex items-center space-x-2 mb-4">
           <Avatar className="h-9 w-9">
-            <AvatarImage src="/placeholder-avatar.jpg" alt={user?.name || "User"} />
+            <AvatarImage
+              src="/placeholder-avatar.jpg"
+              alt={user?.name || "User"}
+            />
             <AvatarFallback>{user?.name?.[0] || "U"}</AvatarFallback>
           </Avatar>
           <div className="space-y-0.5">
@@ -142,9 +159,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <div className="text-xs text-muted-foreground">{user?.email}</div>
           </div>
         </div>
-        <Button 
-          variant="outline" 
-          size="sm" 
+        <Button
+          variant="outline"
+          size="sm"
           onClick={handleLogout}
           className="w-full flex items-center justify-center"
         >
@@ -152,8 +169,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <span>Log out</span>
         </Button>
       </SidebarFooter>
-      
+
       <SidebarRail />
     </Sidebar>
   );
-} 
+}
