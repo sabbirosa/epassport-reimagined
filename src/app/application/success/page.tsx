@@ -5,9 +5,9 @@ import { Card } from "@/components/ui/card";
 import { Calendar, CheckCircle, Clock3, FileCheck, Printer } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 
-export default function ApplicationSuccessPage() {
+function ApplicationSuccessContent() {
   const searchParams = useSearchParams();
   const applicationId = searchParams.get("id") || "BD-0000000000";
   
@@ -163,5 +163,22 @@ export default function ApplicationSuccessPage() {
         </Link>
       </div>
     </div>
+  );
+}
+
+export default function ApplicationSuccessPage() {
+  return (
+    <Suspense fallback={
+      <div className="container max-w-3xl mx-auto py-12 px-4 flex items-center justify-center">
+        <div className="text-center">
+          <div className="h-24 w-24 bg-gray-100 rounded-full flex items-center justify-center mb-6 mx-auto">
+            <Clock3 className="h-12 w-12 text-gray-400" />
+          </div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    }>
+      <ApplicationSuccessContent />
+    </Suspense>
   );
 } 

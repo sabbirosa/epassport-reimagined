@@ -30,7 +30,7 @@ export default function NotificationsPage() {
           <p className="font-medium mb-1">Why set up notifications?</p>
           <p>
             Stay informed about your application status without having to check the portal. 
-            You'll receive updates when your application status changes or when action is required.
+            You&apos;ll receive updates when your application status changes or when action is required.
           </p>
         </div>
       </div>

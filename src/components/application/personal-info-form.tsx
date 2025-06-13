@@ -1,5 +1,6 @@
 "use client";
 
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -22,11 +23,50 @@ import {
 import { useApplication } from "@/lib/context/application-context";
 import { personalInfoSchema, type PersonalInfoValues } from "@/lib/validations/application";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect } from "react";
+import { AlertCircle, CheckCircle, Download, Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+
+interface BirthCertificate {
+  certificateNumber: string;
+  name: string;
+  dateOfBirth: string;
+  placeOfBirth: string;
+  fatherName: string;
+  motherName: string;
+}
+
+interface ExistingPassport {
+  passportNumber: string;
+  issueDate: string;
+  expiryDate: string;
+  status: string;
+}
+
+interface FetchedData {
+  nid: {
+    nidNumber: string;
+    name: string;
+    fatherName: string;
+    motherName: string;
+    dateOfBirth: string;
+    placeOfBirth: string;
+    gender: string;
+    permanentAddress: string;
+    bloodGroup: string;
+  };
+  birthCertificate: BirthCertificate | null;
+  existingPassports: ExistingPassport[];
+  hasExistingPassport: boolean;
+  isEligibleForRenewal: boolean;
+}
 
 export function PersonalInfoForm() {
   const { applicationState, updatePersonalInfo, nextStep } = useApplication();
+  const [isFetching, setIsFetching] = useState(false);
+  const [fetchedData, setFetchedData] = useState<FetchedData | null>(null);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+  const [nidInput, setNidInput] = useState("");
   
   const form = useForm<PersonalInfoValues>({
     resolver: zodResolver(personalInfoSchema),
@@ -45,8 +85,44 @@ export function PersonalInfoForm() {
   useEffect(() => {
     if (Object.keys(applicationState.personalInfo).length > 0) {
       form.reset(applicationState.personalInfo as PersonalInfoValues);
+      setNidInput(applicationState.personalInfo.nid || "");
     }
   }, [form, applicationState.personalInfo]);
+
+  const fetchPersonalDetails = async () => {
+    if (!nidInput.trim()) {
+      setFetchError("Please enter your NID number first");
+      return;
+    }
+
+    setIsFetching(true);
+    setFetchError(null);
+    setFetchedData(null);
+
+    try {
+      const response = await fetch(`/api/fetch-details/${nidInput.trim()}`);
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || 'Failed to fetch data');
+      }
+
+      setFetchedData(result.data);
+      
+      // Auto-populate form with fetched data
+      const nidData = result.data.nid;
+      form.setValue("fullName", nidData.name);
+      form.setValue("nid", nidData.nidNumber);
+      form.setValue("dateOfBirth", nidData.dateOfBirth);
+      form.setValue("placeOfBirth", nidData.placeOfBirth);
+      form.setValue("gender", nidData.gender.toLowerCase() as "male" | "female" | "other");
+      
+    } catch (error) {
+      setFetchError(error instanceof Error ? error.message : 'Failed to fetch data');
+    } finally {
+      setIsFetching(false);
+    }
+  };
 
   function onSubmit(data: PersonalInfoValues) {
     updatePersonalInfo(data);
@@ -58,20 +134,81 @@ export function PersonalInfoForm() {
       <CardHeader>
         <CardTitle>Personal Information</CardTitle>
         <CardDescription>
-          Please provide your basic information as it appears on your national ID card
+          Enter your NID number to automatically fetch your registered details, or fill in manually
         </CardDescription>
       </CardHeader>
       <CardContent>
+        {/* NID Auto-fetch Section */}
+        <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+          <h3 className="text-sm font-medium text-blue-900 mb-3">Quick Start - Fetch from NID</h3>
+          <div className="flex gap-3">
+            <Input
+              placeholder="Enter your NID number (e.g., 1234567890)"
+              value={nidInput}
+              onChange={(e) => setNidInput(e.target.value)}
+              className="flex-1"
+              disabled={isFetching}
+            />
+            <Button
+              type="button"
+              onClick={fetchPersonalDetails}
+              disabled={isFetching || !nidInput.trim()}
+              className="min-w-[140px]"
+            >
+              {isFetching ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Fetching...
+                </>
+              ) : (
+                <>
+                  <Download className="w-4 h-4 mr-2" />
+                  Fetch Details
+                </>
+              )}
+            </Button>
+          </div>
+          
+          {fetchError && (
+            <Alert className="mt-3 border-red-200 bg-red-50">
+              <AlertCircle className="h-4 w-4 text-red-600" />
+              <AlertDescription className="text-red-800">
+                {fetchError}
+              </AlertDescription>
+            </Alert>
+          )}
+          
+          {fetchedData && (
+            <Alert className="mt-3 border-green-200 bg-green-50">
+              <CheckCircle className="h-4 w-4 text-green-600" />
+              <AlertDescription className="text-green-800">
+                ✅ Successfully fetched details for {fetchedData.nid.name}
+                {fetchedData.hasExistingPassport && (
+                  <span className="block text-sm mt-1">
+                    📋 Found {fetchedData.existingPassports.length} existing passport(s)
+                    {fetchedData.isEligibleForRenewal && " - Eligible for renewal"}
+                  </span>
+                )}
+                {fetchedData.birthCertificate && (
+                  <span className="block text-sm mt-1">
+                    📄 Birth certificate verified
+                  </span>
+                )}
+              </AlertDescription>
+            </Alert>
+          )}
+        </div>
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
               control={form.control}
               name="fullName"
-              render={({ field }) => (
+              render={() => (
                 <FormItem>
                   <FormLabel>Full Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter your full name" {...field} />
+                    <Input placeholder="Enter your full name" {...form.register("fullName")} />
                   </FormControl>
                   <FormDescription>
                     Enter your name exactly as it appears on your NID
@@ -84,11 +221,11 @@ export function PersonalInfoForm() {
             <FormField
               control={form.control}
               name="nid"
-              render={({ field }) => (
+              render={() => (
                 <FormItem>
                   <FormLabel>National ID (NID) Number</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter your NID number" {...field} />
+                    <Input placeholder="Enter your NID number" {...form.register("nid")} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -99,11 +236,11 @@ export function PersonalInfoForm() {
               <FormField
                 control={form.control}
                 name="dateOfBirth"
-                render={({ field }) => (
+                render={() => (
                   <FormItem>
                     <FormLabel>Date of Birth</FormLabel>
                     <FormControl>
-                      <Input type="date" {...field} />
+                      <Input type="date" {...form.register("dateOfBirth")} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -113,11 +250,11 @@ export function PersonalInfoForm() {
               <FormField
                 control={form.control}
                 name="placeOfBirth"
-                render={({ field }) => (
+                render={() => (
                   <FormItem>
                     <FormLabel>Place of Birth</FormLabel>
                     <FormControl>
-                      <Input placeholder="City/Town, Country" {...field} />
+                      <Input placeholder="Enter your place of birth" {...form.register("placeOfBirth")} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -129,12 +266,12 @@ export function PersonalInfoForm() {
               <FormField
                 control={form.control}
                 name="gender"
-                render={({ field }) => (
+                render={() => (
                   <FormItem>
                     <FormLabel>Gender</FormLabel>
                     <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
+                      onValueChange={(value) => form.setValue("gender", value as "male" | "female" | "other")}
+                      defaultValue={form.getValues("gender")}
                     >
                       <FormControl>
                         <SelectTrigger>
@@ -155,12 +292,12 @@ export function PersonalInfoForm() {
               <FormField
                 control={form.control}
                 name="maritalStatus"
-                render={({ field }) => (
+                render={() => (
                   <FormItem>
                     <FormLabel>Marital Status</FormLabel>
                     <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
+                      onValueChange={(value) => form.setValue("maritalStatus", value as "single" | "married" | "divorced" | "widowed")}
+                      defaultValue={form.getValues("maritalStatus")}
                     >
                       <FormControl>
                         <SelectTrigger>
@@ -183,11 +320,11 @@ export function PersonalInfoForm() {
             <FormField
               control={form.control}
               name="profession"
-              render={({ field }) => (
+              render={() => (
                 <FormItem>
                   <FormLabel>Profession</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter your profession" {...field} />
+                    <Input placeholder="Enter your profession" {...form.register("profession")} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

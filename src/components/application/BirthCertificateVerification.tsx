@@ -28,30 +28,32 @@ import { z } from "zod";
 
 // Birth certificate record structure
 interface BirthCertificateRecord {
-  registrationNumber: string;
-  name: string;
+  certificateNumber: string;
+  fullName: string;
   dateOfBirth: string;
-  gender: string;
   placeOfBirth: string;
+  gender: string;
   fatherName: string;
-  fatherNID: string;
   motherName: string;
-  motherNID: string;
-  permanentAddress: {
-    street: string;
-    city: string;
-    district: string;
-    division: string;
-    postalCode: string;
-  };
-  registrationDate: string;
-  nid: string;
+  issuedDate: string;
+  registeredBy: string;
 }
 
+
+
+
+
+
+
 // Form validation schema
-const birthCertificateVerificationSchema = z.object({
-  registrationNumber: z.string().min(8, "Registration number must be at least 8 characters"),
-  dateOfBirth: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be in YYYY-MM-DD format"),
+const verificationSchema = z.object({
+  certificateNumber: z
+    .string()
+    .min(10, { message: "Certificate number must be at least 10 characters" })
+    .regex(/^\d+$/, { message: "Certificate number must contain only numbers" }),
+  dateOfBirth: z.string().refine((date) => {
+    return !isNaN(new Date(date).getTime());
+  }, { message: "Please enter a valid date of birth" }),
 });
 
 interface BirthCertificateVerificationProps {
@@ -59,34 +61,35 @@ interface BirthCertificateVerificationProps {
   initialRegNumber?: string;
 }
 
-export default function BirthCertificateVerification({ 
-  onVerified, 
-  initialRegNumber = "" 
+export default function BirthCertificateVerification({
+  initialRegNumber = "",
+  onVerified,
 }: BirthCertificateVerificationProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [verificationStatus, setVerificationStatus] = useState<"idle" | "verified" | "error">("idle");
+  const [verificationStatus, setVerificationStatus] = useState<"idle" | "verifying" | "verified" | "failed">("idle");
   const [certificateData, setCertificateData] = useState<BirthCertificateRecord | null>(null);
+
   
   // Form setup
-  const form = useForm<z.infer<typeof birthCertificateVerificationSchema>>({
-    resolver: zodResolver(birthCertificateVerificationSchema),
+  const form = useForm<z.infer<typeof verificationSchema>>({
+    resolver: zodResolver(verificationSchema),
     defaultValues: {
-      registrationNumber: initialRegNumber,
+      certificateNumber: initialRegNumber,
       dateOfBirth: "",
     },
   });
   
   // Handle form submission
-  const onSubmit = async (values: z.infer<typeof birthCertificateVerificationSchema>) => {
+  const onSubmit = async (values: z.infer<typeof verificationSchema>) => {
     setIsLoading(true);
     setError(null);
-    setVerificationStatus("idle");
+    setVerificationStatus("verifying");
     
     try {
       // Call the birth certificate verification API
       const response = await fetch(
-        `/api/validate/birth-certificate?registrationNumber=${values.registrationNumber}&dateOfBirth=${values.dateOfBirth}`
+        `/api/validate/birth-certificate?registrationNumber=${values.certificateNumber}&dateOfBirth=${values.dateOfBirth}`
       );
       
       const data = await response.json();
@@ -100,12 +103,12 @@ export default function BirthCertificateVerification({
         setVerificationStatus("verified");
         onVerified(data.data);
       } else {
-        setVerificationStatus("error");
+        setVerificationStatus("failed");
         setError(data.error);
       }
-    } catch (err: any) {
-      setVerificationStatus("error");
-      setError(err.message || "An error occurred during verification");
+    } catch (err: unknown) {
+      setVerificationStatus("failed");
+      setError(err instanceof Error ? err.message : "An error occurred during verification");
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -119,6 +122,8 @@ export default function BirthCertificateVerification({
     setVerificationStatus("idle");
     setCertificateData(null);
   };
+  
+
   
   return (
     <Card>
@@ -148,11 +153,11 @@ export default function BirthCertificateVerification({
                 <div className="space-y-2">
                   <div>
                     <p className="text-sm text-gray-500">Registration Number</p>
-                    <p className="font-medium">{certificateData.registrationNumber}</p>
+                    <p className="font-medium">{certificateData.certificateNumber}</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-500">Name</p>
-                    <p className="font-medium">{certificateData.name}</p>
+                    <p className="font-medium">{certificateData.fullName}</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-500">Date of Birth</p>
@@ -173,30 +178,13 @@ export default function BirthCertificateVerification({
                 <h3 className="font-medium text-gray-700 mb-2">Family Information</h3>
                 <div className="space-y-2">
                   <div>
-                    <p className="text-sm text-gray-500">Father's Name</p>
+                    <p className="text-sm text-gray-500">Father&apos;s Name</p>
                     <p className="font-medium">{certificateData.fatherName}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Father's NID</p>
-                    <p className="font-medium">{certificateData.fatherNID}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Mother's Name</p>
+                    <p className="text-sm text-gray-500">Mother&apos;s Name</p>
                     <p className="font-medium">{certificateData.motherName}</p>
                   </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Mother's NID</p>
-                    <p className="font-medium">{certificateData.motherNID}</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div>
-                <h3 className="font-medium text-gray-700 mb-2">Permanent Address</h3>
-                <div className="space-y-1">
-                  <p className="font-medium">{certificateData.permanentAddress.street}</p>
-                  <p>{certificateData.permanentAddress.city}, {certificateData.permanentAddress.district}</p>
-                  <p>{certificateData.permanentAddress.division} - {certificateData.permanentAddress.postalCode}</p>
                 </div>
               </div>
               
@@ -205,14 +193,12 @@ export default function BirthCertificateVerification({
                 <div className="space-y-2">
                   <div>
                     <p className="text-sm text-gray-500">Registration Date</p>
-                    <p className="font-medium">{certificateData.registrationDate}</p>
+                    <p className="font-medium">{certificateData.issuedDate}</p>
                   </div>
-                  {certificateData.nid && (
-                    <div>
-                      <p className="text-sm text-gray-500">National ID</p>
-                      <p className="font-medium">{certificateData.nid}</p>
-                    </div>
-                  )}
+                  <div>
+                    <p className="text-sm text-gray-500">Registered By</p>
+                    <p className="font-medium">{certificateData.registeredBy}</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -222,7 +208,7 @@ export default function BirthCertificateVerification({
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
                 control={form.control}
-                name="registrationNumber"
+                name="certificateNumber"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Birth Certificate Registration Number</FormLabel>

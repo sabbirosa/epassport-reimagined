@@ -1,7 +1,7 @@
 import applicationData from '@/data/applications.json';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     // In a real application, you would:
     // 1. Authenticate the user

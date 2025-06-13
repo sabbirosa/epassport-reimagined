@@ -4,6 +4,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Check, File, Upload, X } from "lucide-react";
+import Image from "next/image";
 import { useState } from "react";
 
 // Define document types and requirements
@@ -76,13 +77,11 @@ export interface UploadedDocument {
 }
 
 interface DocumentUploadProps {
-  applicationId?: string;
   onDocumentsChange?: (documents: UploadedDocument[]) => void;
   initialDocuments?: UploadedDocument[];
 }
 
 export default function DocumentUpload({
-  applicationId,
   onDocumentsChange,
   initialDocuments = [],
 }: DocumentUploadProps) {
@@ -237,20 +236,17 @@ export default function DocumentUpload({
                 <div className="relative">
                   {getDocumentPreview(requirement.id)?.startsWith('data:image') ? (
                     <div className="relative h-40 bg-gray-100 rounded flex items-center justify-center overflow-hidden">
-                      <img 
-                        src={getDocumentPreview(requirement.id)} 
+                      <Image 
+                        src={getDocumentPreview(requirement.id) || ''}
                         alt={requirement.title}
-                        className="max-h-full max-w-full object-contain" 
+                        fill
+                        className="object-contain"
+                        unoptimized
                       />
                     </div>
                   ) : (
                     <div className="h-40 bg-gray-100 rounded flex items-center justify-center">
-                      <div className="flex flex-col items-center text-gray-500">
-                        <File className="h-10 w-10 mb-2" />
-                        <span className="text-sm">
-                          {documents.find(doc => doc.documentType === requirement.id)?.file.name}
-                        </span>
-                      </div>
+                      <File className="h-8 w-8 text-gray-400" />
                     </div>
                   )}
                   

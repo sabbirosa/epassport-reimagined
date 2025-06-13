@@ -34,6 +34,7 @@ interface NIDRecord {
   gender: string;
   fatherName: string;
   motherName: string;
+  bloodGroup: string;
   permanentAddress: {
     street: string;
     city: string;
@@ -48,10 +49,22 @@ interface NIDRecord {
     division: string;
     postalCode: string;
   };
-  bloodGroup: string;
-  phoneNumber: string;
-  issueDate: string;
-  status: string;
+}
+
+
+
+
+
+interface VerificationResult {
+  matched: boolean;
+  message: string;
+  details?: {
+    name?: string;
+    dateOfBirth?: string;
+    gender?: string;
+    fatherName?: string;
+    motherName?: string;
+  };
 }
 
 // Form validation schema
@@ -65,11 +78,15 @@ interface NidVerificationProps {
   initialNid?: string;
 }
 
-export default function NidVerification({ onVerified, initialNid = "" }: NidVerificationProps) {
+export default function NidVerification({
+  initialNid = "",
+  onVerified,
+}: NidVerificationProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [verificationStatus, setVerificationStatus] = useState<"idle" | "verified" | "error">("idle");
-  const [nidData, setNidData] = useState<NIDRecord | null>(null);
+  const [verificationStatus, setVerificationStatus] = useState<"idle" | "verifying" | "verified" | "failed">("idle");
+  const [verificationResult, setVerificationResult] = useState<VerificationResult | null>(null);
+
   
   // Form setup
   const form = useForm<z.infer<typeof nidVerificationSchema>>({
@@ -84,32 +101,34 @@ export default function NidVerification({ onVerified, initialNid = "" }: NidVeri
   const onSubmit = async (values: z.infer<typeof nidVerificationSchema>) => {
     setIsLoading(true);
     setError(null);
-    setVerificationStatus("idle");
+    setVerificationStatus("verifying");
     
     try {
-      // Call the NID verification API
-      const response = await fetch(
-        `/api/validate/nid?nid=${values.nid}&dateOfBirth=${values.dateOfBirth}`
-      );
-      
-      const data = await response.json();
+      const response = await fetch("/api/verify/nid", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ nid: values.nid, dateOfBirth: values.dateOfBirth }),
+      });
       
       if (!response.ok) {
-        throw new Error(data.error || "Failed to verify NID");
+        throw new Error("Failed to verify NID");
       }
       
-      if (data.success) {
-        setNidData(data.data);
-        setVerificationStatus("verified");
-        onVerified(data.data);
+      const result: VerificationResult = await response.json();
+      setVerificationResult(result);
+      setVerificationStatus(result.matched ? "verified" : "failed");
+      
+      if (result.matched) {
+        onVerified(result.details as NIDRecord);
       } else {
-        setVerificationStatus("error");
-        setError(data.error);
+        setError(result.message);
       }
-    } catch (err: any) {
-      setVerificationStatus("error");
-      setError(err.message || "An error occurred during verification");
-      console.error(err);
+    } catch (err: unknown) {
+      console.error("Error verifying NID:", err);
+      setVerificationStatus("failed");
+      setError(err instanceof Error ? err.message : "An error occurred during verification");
     } finally {
       setIsLoading(false);
     }
@@ -120,7 +139,7 @@ export default function NidVerification({ onVerified, initialNid = "" }: NidVeri
     form.reset();
     setError(null);
     setVerificationStatus("idle");
-    setNidData(null);
+    setVerificationResult(null);
   };
   
   return (
@@ -138,68 +157,23 @@ export default function NidVerification({ onVerified, initialNid = "" }: NidVeri
           </Alert>
         )}
         
-        {verificationStatus === "verified" && nidData ? (
+        {verificationStatus === "verified" && verificationResult ? (
           <div className="space-y-4">
             <div className="flex items-center text-green-600 gap-2 font-medium">
               <CheckCircle className="h-5 w-5" />
-              <span>NID Verified Successfully</span>
+              <span>{verificationResult.message}</span>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <h3 className="font-medium text-gray-700 mb-2">Personal Information</h3>
-                <div className="space-y-2">
-                  <div>
-                    <p className="text-sm text-gray-500">Name</p>
-                    <p className="font-medium">{nidData.name}</p>
+            {verificationResult.details && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {Object.entries(verificationResult.details).map(([key, value]) => (
+                  <div key={key}>
+                    <h3 className="font-medium text-gray-700 mb-2">{key.charAt(0).toUpperCase() + key.slice(1)}</h3>
+                    <p className="font-medium">{value}</p>
                   </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Date of Birth</p>
-                    <p className="font-medium">{nidData.dateOfBirth}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Gender</p>
-                    <p className="font-medium">{nidData.gender.charAt(0).toUpperCase() + nidData.gender.slice(1)}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Blood Group</p>
-                    <p className="font-medium">{nidData.bloodGroup}</p>
-                  </div>
-                </div>
+                ))}
               </div>
-              
-              <div>
-                <h3 className="font-medium text-gray-700 mb-2">Family Information</h3>
-                <div className="space-y-2">
-                  <div>
-                    <p className="text-sm text-gray-500">Father's Name</p>
-                    <p className="font-medium">{nidData.fatherName}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Mother's Name</p>
-                    <p className="font-medium">{nidData.motherName}</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div>
-                <h3 className="font-medium text-gray-700 mb-2">Permanent Address</h3>
-                <div className="space-y-1">
-                  <p className="font-medium">{nidData.permanentAddress.street}</p>
-                  <p>{nidData.permanentAddress.city}, {nidData.permanentAddress.district}</p>
-                  <p>{nidData.permanentAddress.division} - {nidData.permanentAddress.postalCode}</p>
-                </div>
-              </div>
-              
-              <div>
-                <h3 className="font-medium text-gray-700 mb-2">Present Address</h3>
-                <div className="space-y-1">
-                  <p className="font-medium">{nidData.presentAddress.street}</p>
-                  <p>{nidData.presentAddress.city}, {nidData.presentAddress.district}</p>
-                  <p>{nidData.presentAddress.division} - {nidData.presentAddress.postalCode}</p>
-                </div>
-              </div>
-            </div>
+            )}
           </div>
         ) : (
           <Form {...form}>

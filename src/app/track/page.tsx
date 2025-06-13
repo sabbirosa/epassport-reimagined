@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Bell, Check, CheckCircle2, Clock, Package, Search, Truck, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -47,7 +47,7 @@ const trackingSchema = z.object({
 
 type TrackingFormValues = z.infer<typeof trackingSchema>;
 
-export default function TrackPage() {
+function TrackPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
@@ -146,16 +146,20 @@ export default function TrackPage() {
       submitted: { bg: "bg-blue-100", text: "text-blue-800", label: "Submitted" },
       processing: { bg: "bg-purple-100", text: "text-purple-800", label: "Processing" },
       payment_pending: { bg: "bg-yellow-100", text: "text-yellow-800", label: "Payment Pending" },
+      offline_payment_pending: { bg: "bg-amber-100", text: "text-amber-800", label: "Offline Payment Pending" },
       payment_confirmed: { bg: "bg-green-100", text: "text-green-800", label: "Payment Confirmed" },
       appointment_scheduled: { bg: "bg-blue-100", text: "text-blue-800", label: "Appointment Scheduled" },
       biometrics_completed: { bg: "bg-indigo-100", text: "text-indigo-800", label: "Biometrics Completed" },
       under_review: { bg: "bg-amber-100", text: "text-amber-800", label: "Under Review" },
       approved: { bg: "bg-green-100", text: "text-green-800", label: "Approved" },
       rejected: { bg: "bg-red-100", text: "text-red-800", label: "Rejected" },
+      pending_final_approval: { bg: "bg-amber-100", text: "text-amber-800", label: "Pending Final Approval" },
+      passport_in_queue: { bg: "bg-blue-100", text: "text-blue-800", label: "Passport In Queue" },
+      ready_for_delivery: { bg: "bg-indigo-100", text: "text-indigo-800", label: "Ready For Delivery" },
       delivered: { bg: "bg-emerald-100", text: "text-emerald-800", label: "Delivered" },
     };
 
-    const config = statusConfig[status];
+    const config = statusConfig[status] || { bg: "bg-gray-100", text: "text-gray-800", label: status };
 
     return (
       <span className={`${config.bg} ${config.text} px-3 py-1 rounded-full text-sm font-medium`}>
@@ -334,7 +338,7 @@ export default function TrackPage() {
           </CardHeader>
           <CardContent>
             <p className="text-red-600">
-              We couldn't find an application with ID <strong>{applicationId}</strong>. Please check
+              We couldn&apos;t find an application with ID <strong>{applicationId}</strong>. Please check
               the ID and try again.
             </p>
           </CardContent>
@@ -386,7 +390,7 @@ export default function TrackPage() {
                 <div>
                   <h3 className="font-medium text-green-800">Passport Delivered</h3>
                   <p className="text-green-700 text-sm mt-1">
-                    Your passport has been delivered. If you haven't received it yet, please contact customer support.
+                    Your passport has been delivered. If you haven&apos;t received it yet, please contact customer support.
                   </p>
                 </div>
               </div>
@@ -449,5 +453,20 @@ export default function TrackPage() {
         </Card>
       )}
     </div>
+  );
+}
+
+export default function TrackPage() {
+  return (
+    <Suspense fallback={
+      <div className="container max-w-3xl mx-auto py-12 px-4 flex items-center justify-center">
+        <div className="text-center">
+          <div className="h-12 w-12 border-4 border-green-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    }>
+      <TrackPageContent />
+    </Suspense>
   );
 } 

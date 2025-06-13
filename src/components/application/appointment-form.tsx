@@ -20,29 +20,24 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useApplication } from "@/lib/context/application-context";
 import { cn } from "@/lib/utils";
-import { paymentSchema, type PaymentValues } from "@/lib/validations/application";
+import { appointmentSchema, type AppointmentValues } from "@/lib/validations/application";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { addBusinessDays, addDays, format, isAfter, isBefore } from "date-fns";
 import { CalendarIcon, CheckCircle2, XCircle } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 
 export function AppointmentForm() {
-  const { applicationState, updatePayment, nextStep, prevStep, updateApplicationStatus } = useApplication();
+  const { applicationState, updateAppointment, nextStep, prevStep, updateApplicationStatus } = useApplication();
   
-  // Default values for the form
-  const defaultValues: Partial<PaymentValues> = {
-    appointmentDate: applicationState.payment.appointmentDate || undefined,
-    appointmentTime: applicationState.payment.appointmentTime || undefined,
-    appointmentLocation: applicationState.payment.appointmentLocation || undefined,
-  };
+  const defaultValues = useMemo(() => ({
+    appointmentDate: applicationState.appointment.appointmentDate || "",
+    appointmentTime: applicationState.appointment.appointmentTime || "",
+    appointmentLocation: applicationState.appointment.appointmentLocation || "",
+  }), [applicationState.appointment]);
   
-  const form = useForm<Partial<PaymentValues>>({
-    resolver: zodResolver(paymentSchema.pick({ 
-      appointmentDate: true, 
-      appointmentTime: true, 
-      appointmentLocation: true 
-    })),
+  const form = useForm<AppointmentValues>({
+    resolver: zodResolver(appointmentSchema),
     defaultValues,
   });
 
@@ -93,8 +88,8 @@ export function AppointmentForm() {
     }, 2000);
   };
 
-  function onSubmit(data: Partial<PaymentValues>) {
-    updatePayment(data as PaymentValues);
+  function onSubmit(data: AppointmentValues) {
+    updateAppointment(data);
     scheduleAppointment();
   }
 

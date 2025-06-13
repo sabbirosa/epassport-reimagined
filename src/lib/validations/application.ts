@@ -127,10 +127,21 @@ export const paymentSchema = z.object({
     transactionId: z.string().optional(),
     depositDate: z.string().optional(),
   }).optional(),
-  // Appointment details
-  appointmentDate: z.string().optional(),
-  appointmentTime: z.string().optional(),
-  appointmentLocation: z.string().optional(),
+});
+
+// Appointment Schema
+export const appointmentSchema = z.object({
+  appointmentDate: z.string().refine((date) => {
+    return !isNaN(new Date(date).getTime());
+  }, { 
+    message: "Please select a valid appointment date" 
+  }),
+  appointmentTime: z.string().min(1, { 
+    message: "Please select an appointment time" 
+  }),
+  appointmentLocation: z.string().min(1, { 
+    message: "Please select a passport office location" 
+  }),
 });
 
 // Combined application schema
@@ -140,6 +151,7 @@ export const applicationSchema = z.object({
   passportDetails: passportDetailsSchema,
   documents: documentsSchema,
   payment: paymentSchema,
+  appointment: appointmentSchema,
   applicationStatus: z.enum([
     "draft",
     "submitted",
@@ -165,4 +177,5 @@ export type ContactInfoValues = z.infer<typeof contactInfoSchema>;
 export type PassportDetailsValues = z.infer<typeof passportDetailsSchema>;
 export type DocumentsValues = z.infer<typeof documentsSchema>;
 export type PaymentValues = z.infer<typeof paymentSchema>;
+export type AppointmentValues = z.infer<typeof appointmentSchema>;
 export type ApplicationValues = z.infer<typeof applicationSchema>; 

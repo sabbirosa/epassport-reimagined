@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 // Mock document statistics
 const mockDocumentStats = {
@@ -59,7 +59,7 @@ const mockDocumentStats = {
   ]
 };
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // In a real application, this would fetch data from a database
     // and apply any filtering based on query parameters

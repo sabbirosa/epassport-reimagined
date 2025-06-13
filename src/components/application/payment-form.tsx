@@ -22,7 +22,7 @@ import { paymentSchema, type PaymentValues } from "@/lib/validations/application
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { BanknoteIcon, CalendarIcon, CheckCircle2, CreditCard, FileText, Landmark, Smartphone, XCircle } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 
 export function PaymentForm() {
@@ -32,10 +32,9 @@ export function PaymentForm() {
   const deliveryOption = applicationState.passportDetails.deliveryOption || "regular";
   const amount = deliveryOption === "express" ? 7000 : 3500;
   
-  // Default values for the form
-  const defaultValues: PaymentValues = {
+  const defaultValues = useMemo(() => ({
     paymentMethod: applicationState.payment.paymentMethod || "credit_card",
-    amount,
+    amount: applicationState.payment.amount || 0,
     agreeToTerms: applicationState.payment.agreeToTerms || false,
     bankDetails: applicationState.payment.bankDetails || {
       bankName: "",
@@ -44,7 +43,7 @@ export function PaymentForm() {
       transactionId: "",
       depositDate: "",
     },
-  };
+  }), [applicationState.payment]);
   
   const form = useForm<PaymentValues>({
     resolver: zodResolver(paymentSchema),
@@ -426,7 +425,7 @@ export function PaymentForm() {
                           <h5 className="font-medium text-amber-800">Offline Payment Verification</h5>
                           <p className="text-sm text-amber-700">
                             Your application will be on hold until we verify your payment. This process typically takes 1-2 business days.
-                            After confirmation, you'll receive an email notification to schedule your biometric appointment.
+                            After confirmation, you&apos;ll receive an email notification to schedule your biometric appointment.
                           </p>
                         </div>
                       </div>
@@ -469,6 +468,9 @@ export function PaymentForm() {
             </form>
           </Form>
         )}
+        <div className="text-sm text-muted-foreground">
+          Please note that this is a mock payment system. In a real application, you&apos;d be redirected to a secure payment gateway.
+        </div>
       </CardContent>
     </Card>
   );

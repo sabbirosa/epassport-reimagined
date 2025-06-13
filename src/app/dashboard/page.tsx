@@ -11,7 +11,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Tabs,
@@ -19,19 +18,20 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
+
 import {
-  ArrowRight,
   Bell,
   Calendar,
-  CheckCircle,
-  Clock,
+  Download,
+  Eye,
   FileText,
-  Package,
   Plus,
-  User,
+  User
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+
+
 
 // Mock user data
 const mockUser = {
@@ -97,59 +97,7 @@ const mockNotifications = [
   },
 ];
 
-// Application status configuration
-const statusConfig: Record<string, { label: string; color: string; icon: any }> = {
-  draft: { 
-    label: "Draft", 
-    color: "bg-gray-100 text-gray-800", 
-    icon: FileText 
-  },
-  submitted: { 
-    label: "Submitted", 
-    color: "bg-blue-100 text-blue-800", 
-    icon: CheckCircle 
-  },
-  payment_pending: { 
-    label: "Payment Pending", 
-    color: "bg-yellow-100 text-yellow-800", 
-    icon: Clock 
-  },
-  payment_confirmed: { 
-    label: "Payment Confirmed", 
-    color: "bg-green-100 text-green-800", 
-    icon: CheckCircle 
-  },
-  appointment_scheduled: { 
-    label: "Appointment Scheduled", 
-    color: "bg-blue-100 text-blue-800", 
-    icon: Calendar 
-  },
-  biometrics_completed: { 
-    label: "Biometrics Completed", 
-    color: "bg-indigo-100 text-indigo-800", 
-    icon: CheckCircle 
-  },
-  under_review: { 
-    label: "Under Review", 
-    color: "bg-amber-100 text-amber-800", 
-    icon: Clock 
-  },
-  approved: { 
-    label: "Approved", 
-    color: "bg-green-100 text-green-800", 
-    icon: CheckCircle 
-  },
-  rejected: { 
-    label: "Rejected", 
-    color: "bg-red-100 text-red-800", 
-    icon: Clock 
-  },
-  delivered: { 
-    label: "Delivered", 
-    color: "bg-emerald-100 text-emerald-800", 
-    icon: Package 
-  },
-};
+
 
 // Helper to format dates
 function formatDate(dateString: string): string {
@@ -161,102 +109,61 @@ function formatDate(dateString: string): string {
   return new Date(dateString).toLocaleDateString(undefined, options);
 }
 
-export default function UserDashboard() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [activeApplications, setActiveApplications] = useState<typeof mockApplications>([]);
+
+
+export default function DashboardPage() {
+  const [currentApplications, setCurrentApplications] = useState<typeof mockApplications>([]);
   const [pastApplications, setPastApplications] = useState<typeof mockApplications>([]);
   const [notifications, setNotifications] = useState<typeof mockNotifications>([]);
+  const [isLoading, setIsLoading] = useState(true);
   
   // Simulate data loading
   useEffect(() => {
-    const timer = setTimeout(() => {
-      // Filter active and past applications
+    setTimeout(() => {
       const active = mockApplications.filter(app => app.status !== "delivered" && app.status !== "rejected");
       const past = mockApplications.filter(app => app.status === "delivered" || app.status === "rejected");
       
-      setActiveApplications(active);
+      setCurrentApplications(active);
       setPastApplications(past);
       setNotifications(mockNotifications);
       setIsLoading(false);
-    }, 1500);
-    
-    return () => clearTimeout(timer);
+    }, 1000);
   }, []);
   
-  // Helper to render status badge
-  const renderStatusBadge = (status: string) => {
-    const config = statusConfig[status] || { 
-      label: status, 
-      color: "bg-gray-100 text-gray-800", 
-      icon: FileText 
-    };
-    
-    const Icon = config.icon;
-    
-    return (
-      <Badge variant="outline" className={`${config.color} flex items-center gap-1 font-medium`}>
-        <Icon className="h-3 w-3" />
-        <span>{config.label}</span>
-      </Badge>
-    );
-  };
+
   
   // Render application card
   const renderApplicationCard = (application: typeof mockApplications[0]) => {
     return (
-      <Card key={application.id} className="mb-4">
-        <CardHeader className="pb-2">
-          <div className="flex justify-between items-start">
-            <div>
-              <CardTitle className="text-base">{application.type}</CardTitle>
-              <CardDescription>
-                ID: <span className="font-medium">{application.id}</span>
-              </CardDescription>
+      <Card key={application.id} className="hover:shadow-md transition-shadow">
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <div className="flex items-center space-x-3">
+                <h3 className="font-semibold">Application #{application.id}</h3>
+                <Badge variant={getStatusVariant(application.status)}>
+                  {application.status.charAt(0).toUpperCase() + application.status.slice(1)}
+                </Badge>
+              </div>
+              <p className="text-sm text-gray-500">
+                Submitted on {formatDate(application.submissionDate)}
+              </p>
+              <p className="text-sm text-gray-600">
+                Current Status: {application.status.replace("_", " ").replace(/\b\w/g, (l: string) => l.toUpperCase())}
+              </p>
             </div>
-            {renderStatusBadge(application.status)}
-          </div>
-        </CardHeader>
-        <CardContent className="pb-2">
-          <div className="space-y-3">
-            <div>
-              <div className="flex justify-between text-sm mb-1">
-                <span className="text-gray-500">Application Progress</span>
-                <span className="font-medium">{application.progress}%</span>
-              </div>
-              <Progress value={application.progress} className="h-2" />
-            </div>
-            <div className="grid grid-cols-2 gap-2 text-sm">
-              <div>
-                <p className="text-gray-500">Submitted</p>
-                <p>{formatDate(application.submissionDate)}</p>
-              </div>
-              <div>
-                <p className="text-gray-500">Last Updated</p>
-                <p>{formatDate(application.lastUpdated)}</p>
-              </div>
-              {application.appointmentDate && (
-                <div>
-                  <p className="text-gray-500">Appointment</p>
-                  <p>{formatDate(application.appointmentDate)}</p>
-                </div>
-              )}
-              {application.estimatedDelivery && (
-                <div>
-                  <p className="text-gray-500">Est. Delivery</p>
-                  <p>{formatDate(application.estimatedDelivery)}</p>
-                </div>
-              )}
+            <div className="flex items-center space-x-2">
+              <Button variant="outline" size="sm">
+                <Eye className="h-4 w-4 mr-1" />
+                View
+              </Button>
+              <Button variant="outline" size="sm">
+                <Download className="h-4 w-4 mr-1" />
+                Download
+              </Button>
             </div>
           </div>
         </CardContent>
-        <CardFooter className="pt-0">
-          <Button variant="outline" size="sm" className="w-full" asChild>
-            <Link href={`/track?id=${application.id}`}>
-              View Details
-              <ArrowRight className="h-4 w-4 ml-2" />
-            </Link>
-          </Button>
-        </CardFooter>
       </Card>
     );
   };
@@ -282,6 +189,22 @@ export default function UserDashboard() {
         </div>
       </div>
     );
+  };
+  
+
+  
+  const getStatusVariant = (status: string): "default" | "secondary" | "destructive" | "outline" => {
+    switch (status) {
+      case "processing":
+      case "submitted":
+        return "default";
+      case "delivered":
+        return "secondary";
+      case "rejected":
+        return "destructive";
+      default:
+        return "outline";
+    }
   };
   
   return (
@@ -394,14 +317,14 @@ export default function UserDashboard() {
                   </Card>
                 ))}
               </div>
-            ) : activeApplications.length > 0 ? (
+            ) : currentApplications.length > 0 ? (
               <div>
-                {activeApplications.map(renderApplicationCard)}
+                {currentApplications.map(renderApplicationCard)}
               </div>
             ) : (
               <Alert>
                 <AlertDescription>
-                  You don't have any active applications. 
+                  You don&apos;t have any active applications. 
                   <Link href="/apply" className="text-green-600 ml-1 font-medium">
                     Start a new application
                   </Link>
@@ -457,7 +380,7 @@ export default function UserDashboard() {
             ) : (
               <Alert>
                 <AlertDescription>
-                  You don't have any notifications.
+                  You don&apos;t have any notifications.
                 </AlertDescription>
               </Alert>
             )}

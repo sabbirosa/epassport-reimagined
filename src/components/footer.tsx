@@ -66,7 +66,7 @@ export default function Footer() {
         <div className="mt-8 pt-6 border-t border-gray-200 text-center text-gray-500 text-sm">
           <p>
             &copy; {new Date().getFullYear()} Department of Immigration & Passports, Government of
-            the People's Republic of Bangladesh
+            the People&apos;s Republic of Bangladesh
           </p>
           <div className="mt-2 flex justify-center space-x-4">
             <Link href="/privacy" className="hover:text-green-600">

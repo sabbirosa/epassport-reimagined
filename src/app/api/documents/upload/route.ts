@@ -35,7 +35,6 @@ async function processDocument(formData: FormData): Promise<{ success: boolean; 
     // Get document file and metadata
     const file = formData.get("file") as File | null;
     const documentType = formData.get("documentType") as string | null;
-    const applicationId = formData.get("applicationId") as string | null;
     
     if (!file || !documentType) {
       return {

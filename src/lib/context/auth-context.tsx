@@ -77,7 +77,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       if (matchedUser) {
         // Create user object without password
-        const { password, ...userWithoutPassword } = matchedUser;
+        const { ...userWithoutPassword } = matchedUser;
         setUser(userWithoutPassword);
         
         // Store in localStorage

@@ -17,14 +17,13 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useApplication } from "@/lib/context/application-context";
 import { passportDetailsSchema, type PassportDetailsValues } from "@/lib/validations/application";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 
 export function PassportDetailsForm() {
   const { applicationState, updatePassportDetails, nextStep, prevStep } = useApplication();
   
-  // Default values for the form
-  const defaultValues: PassportDetailsValues = {
+  const defaultValues = useMemo(() => ({
     passportType: applicationState.passportDetails.passportType || "ordinary",
     applicationReason: applicationState.passportDetails.applicationReason || "new",
     deliveryOption: applicationState.passportDetails.deliveryOption || "regular",
@@ -34,7 +33,7 @@ export function PassportDetailsForm() {
       issueDate: applicationState.passportDetails.previousPassport?.issueDate || "",
       expiryDate: applicationState.passportDetails.previousPassport?.expiryDate || "",
     },
-  };
+  }), [applicationState.passportDetails]);
   
   const form = useForm<PassportDetailsValues>({
     resolver: zodResolver(passportDetailsSchema),

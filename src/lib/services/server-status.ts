@@ -82,7 +82,7 @@ function generateServerStatus(): ServerStatus {
 }
 
 // Store history data for charts
-let statusHistory: ServerStatusHistory = {
+const statusHistory: ServerStatusHistory = {
   timestamps: [],
   cpuLoads: [],
   memoryUsages: [],

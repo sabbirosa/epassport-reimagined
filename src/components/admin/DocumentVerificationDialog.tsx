@@ -2,19 +2,19 @@
 
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
 } from "@/components/ui/card";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
 } from "@/components/ui/dialog";
 import { AlertTriangle, Calendar, CheckCircle, FileCheck, FileText, Fingerprint, XCircle } from "lucide-react";
 import { useState } from "react";
@@ -216,14 +216,14 @@ export default function DocumentVerificationDialog({
                      applicationData.nidNumber === "9999999999"
           },
           {
-            field: "Father's Name",
+            field: "Father&apos;s Name",
             applied: applicationData.fatherName || "",
             record: nidRecord.fatherName,
             matched: applicationData.fatherName === nidRecord.fatherName || 
                      applicationData.nidNumber === "9999999999"
           },
           {
-            field: "Mother's Name",
+            field: "Mother&apos;s Name",
             applied: applicationData.motherName || "",
             record: nidRecord.motherName,
             matched: applicationData.motherName === nidRecord.motherName || 
@@ -268,13 +268,13 @@ export default function DocumentVerificationDialog({
             matched: applicationData.placeOfBirth === birthRecord.placeOfBirth
           },
           {
-            field: "Father's Name",
+            field: "Father&apos;s Name",
             applied: applicationData.fatherName || "",
             record: birthRecord.fatherName,
             matched: applicationData.fatherName === birthRecord.fatherName
           },
           {
-            field: "Mother's Name",
+            field: "Mother&apos;s Name",
             applied: applicationData.motherName || "",
             record: birthRecord.motherName,
             matched: applicationData.motherName === birthRecord.motherName
@@ -452,7 +452,7 @@ export default function DocumentVerificationDialog({
                 <div className="pl-2 border-l-2 border-red-300">
                   {mismatched.map((result, index) => (
                     <div key={index} className="text-sm py-1">
-                      <span className="font-medium">{result.field}:</span> Application has "{result.applied}" but record shows "{result.record}"
+                      <span className="font-medium">{result.field}:</span> Application has &apos;{result.applied}&apos; but record shows &apos;{result.record}&apos;
                     </div>
                   ))}
                 </div>
@@ -470,7 +470,7 @@ export default function DocumentVerificationDialog({
         <DialogHeader>
           <DialogTitle>Document Verification</DialogTitle>
           <DialogDescription>
-            Verify applicant's documents against government records
+            Verify applicant&apos;s documents against government records
           </DialogDescription>
         </DialogHeader>
 

@@ -119,6 +119,22 @@ export function createStatusNotificationContent(notification: StatusNotification
     payment_pending: {
       subject: "Payment Required: Your e-Passport Application",
       body: `Dear ${recipientName}, your e-Passport application (${applicationId}) is awaiting payment. Please complete the payment to proceed.`
+    },
+    offline_payment_pending: {
+      subject: "Offline Payment Required: Your e-Passport Application",
+      body: `Dear ${recipientName}, your e-Passport application (${applicationId}) is awaiting offline payment verification. Please complete the bank deposit and provide the transaction details.`
+    },
+    pending_final_approval: {
+      subject: "Pending Final Approval: Your e-Passport Application",
+      body: `Dear ${recipientName}, your e-Passport application (${applicationId}) is pending final approval. We will notify you once the approval process is complete.`
+    },
+    passport_in_queue: {
+      subject: "Passport in Production Queue: Your e-Passport Application",
+      body: `Dear ${recipientName}, your e-Passport application (${applicationId}) has been approved and is now in the production queue. Your passport will be printed soon.`
+    },
+    ready_for_delivery: {
+      subject: "Ready for Delivery: Your e-Passport Application",
+      body: `Dear ${recipientName}, your e-Passport (${applicationId}) is ready for delivery.${estimatedDelivery ? ` Expected delivery date: ${estimatedDelivery}.` : ''} You will receive it soon.`
     }
   };
   

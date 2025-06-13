@@ -19,22 +19,31 @@ import {
 import { AlertCircle, CheckCircle } from "lucide-react";
 import { useState } from "react";
 
+interface VerificationResult {
+  field: string;
+  value: string;
+  expected: string;
+  status: "matched" | "mismatched";
+}
+
 interface Application {
   id: string;
-  name: string;
-  gender: string;
-  dateOfBirth: string;
-  placeOfBirth: string;
-  fatherName: string;
-  motherName: string;
-  address: string;
-  phone: string;
-  email: string;
-  nidNumber: string;
-  oldPassportNumber: string;
-  birthCertificateNumber: string;
-  paymentMethod: string;
-  [key: string]: any;
+  personalInfo: {
+    fullName: string;
+    nid: string;
+    dateOfBirth: string;
+    placeOfBirth: string;
+    gender: string;
+    fatherName: string;
+    motherName: string;
+    address: string;
+    phone: string;
+    email: string;
+    oldPassportNumber?: string;
+    birthCertificateNumber?: string;
+    paymentMethod: string;
+  };
+  verificationResults: VerificationResult[];
 }
 
 interface DataVerificationDialogProps {
@@ -90,57 +99,57 @@ export default function DataVerificationDialog({
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1">
                     <p className="text-sm font-medium">Name</p>
-                    <p className="text-sm text-gray-700">{application.name}</p>
+                    <p className="text-sm text-gray-700">{application.personalInfo.fullName}</p>
                   </div>
                   <div className="space-y-1">
                     <p className="text-sm font-medium">Gender</p>
-                    <p className="text-sm text-gray-700">{application.gender}</p>
+                    <p className="text-sm text-gray-700">{application.personalInfo.gender}</p>
                   </div>
                   <div className="space-y-1">
                     <p className="text-sm font-medium">Date of Birth</p>
-                    <p className="text-sm text-gray-700">{application.dateOfBirth}</p>
+                    <p className="text-sm text-gray-700">{application.personalInfo.dateOfBirth}</p>
                   </div>
                   <div className="space-y-1">
                     <p className="text-sm font-medium">Place of Birth</p>
-                    <p className="text-sm text-gray-700">{application.placeOfBirth}</p>
+                    <p className="text-sm text-gray-700">{application.personalInfo.placeOfBirth}</p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-sm font-medium">Father's Name</p>
-                    <p className="text-sm text-gray-700">{application.fatherName}</p>
+                    <p className="text-sm font-medium">Father&apos;s Name</p>
+                    <p className="text-sm text-gray-700">{application.personalInfo.fatherName}</p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-sm font-medium">Mother's Name</p>
-                    <p className="text-sm text-gray-700">{application.motherName}</p>
+                    <p className="text-sm font-medium">Mother&apos;s Name</p>
+                    <p className="text-sm text-gray-700">{application.personalInfo.motherName}</p>
                   </div>
                   <div className="space-y-1">
                     <p className="text-sm font-medium">Address</p>
-                    <p className="text-sm text-gray-700">{application.address}</p>
+                    <p className="text-sm text-gray-700">{application.personalInfo.address}</p>
                   </div>
                   <div className="space-y-1">
                     <p className="text-sm font-medium">Phone</p>
-                    <p className="text-sm text-gray-700">{application.phone}</p>
+                    <p className="text-sm text-gray-700">{application.personalInfo.phone}</p>
                   </div>
                   <div className="space-y-1">
                     <p className="text-sm font-medium">Email</p>
-                    <p className="text-sm text-gray-700">{application.email}</p>
+                    <p className="text-sm text-gray-700">{application.personalInfo.email}</p>
                   </div>
                   <div className="space-y-1">
                     <p className="text-sm font-medium">NID Number</p>
-                    <p className="text-sm text-gray-700">{application.nidNumber}</p>
+                    <p className="text-sm text-gray-700">{application.personalInfo.nid}</p>
                   </div>
-                  {application.oldPassportNumber && (
+                  {application.personalInfo.oldPassportNumber && (
                     <div className="space-y-1">
                       <p className="text-sm font-medium">Old Passport Number</p>
-                      <p className="text-sm text-gray-700">{application.oldPassportNumber}</p>
+                      <p className="text-sm text-gray-700">{application.personalInfo.oldPassportNumber}</p>
                     </div>
                   )}
                   <div className="space-y-1">
                     <p className="text-sm font-medium">Birth Certificate Number</p>
-                    <p className="text-sm text-gray-700">{application.birthCertificateNumber}</p>
+                    <p className="text-sm text-gray-700">{application.personalInfo.birthCertificateNumber}</p>
                   </div>
                   <div className="space-y-1">
                     <p className="text-sm font-medium">Payment Method</p>
-                    <p className="text-sm text-gray-700 capitalize">{application.paymentMethod || "Not specified"}</p>
+                    <p className="text-sm text-gray-700 capitalize">{application.personalInfo.paymentMethod}</p>
                   </div>
                 </div>
               </CardContent>
@@ -179,7 +188,7 @@ export default function DataVerificationDialog({
               <CardContent>
                 <div className="flex items-center space-x-2 text-green-600">
                   <CheckCircle className="h-5 w-5" />
-                  <p>Payment method: <span className="capitalize">{application.paymentMethod || "Not specified"}</span></p>
+                  <p>Payment method: <span className="capitalize">{application.personalInfo.paymentMethod}</span></p>
                 </div>
                 <p className="text-sm text-gray-500 mt-2">
                   The payment method was selected by the applicant during the application process.

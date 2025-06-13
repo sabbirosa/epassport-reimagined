@@ -6,14 +6,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { ServerStatus, ServerStatusHistory } from "@/lib/services/server-status";
+import type { ServerStatus } from "@/lib/services/server-status";
 import { Activity, AlertTriangle, BarChart, CheckCircle, Clock, Database, Server, Users } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function AdminDashboard() {
   const [serverStatus, setServerStatus] = useState<ServerStatus | null>(null);
-  const [statusHistory, setStatusHistory] = useState<ServerStatusHistory | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
@@ -29,7 +28,6 @@ export default function AdminDashboard() {
       
       const data = await response.json();
       setServerStatus(data.status);
-      setStatusHistory(data.history);
       setError(null);
     } catch (err) {
       setError("Could not load server status data");

@@ -16,21 +16,20 @@ import { useApplication } from "@/lib/context/application-context";
 import { documentsSchema, type DocumentsValues } from "@/lib/validations/application";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle, CheckCircle2, Info, Upload, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 
 export function DocumentsForm() {
   const { applicationState, updateDocuments, nextStep, prevStep } = useApplication();
   
-  // Default values for the form
-  const defaultValues: DocumentsValues = {
+  const defaultValues = useMemo(() => ({
     photoUploaded: applicationState.documents.photoUploaded || false,
     nidUploaded: applicationState.documents.nidUploaded || false,
     birthCertificateUploaded: applicationState.documents.birthCertificateUploaded || false,
     previousPassportUploaded: applicationState.documents.previousPassportUploaded || false,
     additionalDocuments: applicationState.documents.additionalDocuments || [],
     declaration: applicationState.documents.declaration || false,
-  };
+  }), [applicationState.documents]);
   
   const form = useForm<DocumentsValues>({
     resolver: zodResolver(documentsSchema),
@@ -161,7 +160,7 @@ export function DocumentsForm() {
                 <FormField
                   control={form.control}
                   name="photoUploaded"
-                  render={({ field }) => (
+                  render={() => (
                     <FormItem>
                       <div className="border rounded-md p-4">
                         <FormDescription className="mb-3">
@@ -180,7 +179,7 @@ export function DocumentsForm() {
                 <FormField
                   control={form.control}
                   name="nidUploaded"
-                  render={({ field }) => (
+                  render={() => (
                     <FormItem>
                       <div className="border rounded-md p-4">
                         <FormDescription className="mb-3">
@@ -199,7 +198,7 @@ export function DocumentsForm() {
                 <FormField
                   control={form.control}
                   name="birthCertificateUploaded"
-                  render={({ field }) => (
+                  render={() => (
                     <FormItem>
                       <div className="border rounded-md p-4">
                         <FormDescription className="mb-3">
@@ -220,7 +219,7 @@ export function DocumentsForm() {
                 <FormField
                   control={form.control}
                   name="previousPassportUploaded"
-                  render={({ field }) => (
+                  render={() => (
                     <FormItem>
                       <div className="border rounded-md p-4">
                         <FormDescription className="mb-3">

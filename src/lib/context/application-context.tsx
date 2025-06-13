@@ -10,6 +10,7 @@ import {
 
 import type {
     ApplicationValues,
+    AppointmentValues,
     ContactInfoValues,
     DocumentsValues,
     PassportDetailsValues,
@@ -24,6 +25,7 @@ type ApplicationState = {
   passportDetails: Partial<PassportDetailsValues>;
   documents: Partial<DocumentsValues>;
   payment: Partial<PaymentValues>;
+  appointment: Partial<AppointmentValues>;
   applicationId?: string;
   applicationStatus: ApplicationValues["applicationStatus"];
 };
@@ -35,6 +37,7 @@ type ApplicationContextType = {
   updatePassportDetails: (data: Partial<PassportDetailsValues>) => void;
   updateDocuments: (data: Partial<DocumentsValues>) => void;
   updatePayment: (data: Partial<PaymentValues>) => void;
+  updateAppointment: (data: Partial<AppointmentValues>) => void;
   nextStep: () => void;
   prevStep: () => void;
   goToStep: (step: number) => void;
@@ -49,6 +52,7 @@ const defaultApplicationState: ApplicationState = {
   passportDetails: {},
   documents: {},
   payment: {},
+  appointment: {},
   applicationStatus: "draft",
 };
 
@@ -102,6 +106,13 @@ export function ApplicationProvider({ children }: { children: ReactNode }) {
     }));
   }, []);
 
+  const updateAppointment = useCallback((data: Partial<AppointmentValues>) => {
+    setApplicationState((prevState) => ({
+      ...prevState,
+      appointment: { ...prevState.appointment, ...data },
+    }));
+  }, []);
+
   const nextStep = useCallback(() => {
     setApplicationState((prevState) => ({
       ...prevState,
@@ -146,6 +157,7 @@ export function ApplicationProvider({ children }: { children: ReactNode }) {
         updatePassportDetails,
         updateDocuments,
         updatePayment,
+        updateAppointment,
         nextStep,
         prevStep,
         goToStep,

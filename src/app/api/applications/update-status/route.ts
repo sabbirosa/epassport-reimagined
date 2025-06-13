@@ -14,13 +14,19 @@ interface Application {
   appointmentDate: string | null;
   biometricsDate: string | null;
   notes: string;
-  [key: string]: any; // Allow for other properties
+}
+
+interface UpdateStatusRequest {
+  applicationId: string;
+  status: string;
+  comment?: string;
+  appointmentDate?: string;
 }
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const { applicationId, status, notes } = body;
+    const body: UpdateStatusRequest = await req.json();
+    const { applicationId, status, comment } = body;
 
     if (!applicationId || !status) {
       return NextResponse.json(
@@ -48,7 +54,7 @@ export async function POST(req: NextRequest) {
       ...updatedApplications[applicationIndex],
       status,
       lastUpdated: new Date().toISOString(),
-      notes: notes || updatedApplications[applicationIndex].notes
+      notes: comment || updatedApplications[applicationIndex].notes
     };
 
     // Add additional fields based on status
@@ -64,15 +70,26 @@ export async function POST(req: NextRequest) {
     const filePath = path.join(process.cwd(), 'src', 'data', 'applications.json');
     await fs.promises.writeFile(filePath, JSON.stringify(updatedApplications, null, 2));
 
+    const application = updatedApplications[applicationIndex];
+
     return NextResponse.json({
       status: 'success',
       message: 'Application status updated successfully',
-      application: updatedApplications[applicationIndex]
+      application: {
+        id: application.id,
+        name: application.name,
+        status: application.status,
+        submissionDate: application.submissionDate,
+        updatedAt: application.lastUpdated,
+      }
     });
-  } catch (error) {
-    console.error('Error updating application status:', error);
+  } catch (error: unknown) {
+    console.error("Error updating application status:", error);
     return NextResponse.json(
-      { error: 'Failed to update application status' },
+      { 
+        success: false, 
+        error: error instanceof Error ? error.message : "Failed to update application status" 
+      },
       { status: 500 }
     );
   }

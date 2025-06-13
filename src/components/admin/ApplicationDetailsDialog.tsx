@@ -25,10 +25,55 @@ import {
 } from "@/components/ui/tabs";
 import { Calendar, FileText, MapPin, Phone, User } from "lucide-react";
 
+interface Document {
+  type: string;
+  status: string;
+  uploadedAt: string;
+  url: string;
+}
+
+interface ApplicationDetails {
+  id: string;
+  status: string;
+  submittedAt: string;
+  documents: Document[];
+  personalInfo: {
+    fullName: string;
+    nid: string;
+    dateOfBirth: string;
+    gender: string;
+    placeOfBirth: string;
+    fatherName: string;
+    motherName: string;
+    maritalStatus: string;
+    profession: string;
+    birthCertificateNumber: string;
+    phone: string;
+    email: string;
+    presentAddress: string;
+    permanentAddress: string;
+    emergencyContact: {
+      name: string;
+      relationship: string;
+      phone: string;
+      address: string;
+    };
+    applicationReason: string;
+    oldPassportNumber?: string;
+    oldPassportIssueDate?: string;
+    oldPassportExpiryDate?: string;
+  };
+  passportType: string;
+  deliveryOption: string;
+  appointmentDate: string;
+  paymentMethod: string;
+  notes?: string;
+}
+
 interface ApplicationDetailsDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  application: any; // In a real app, you would type this properly
+  application: ApplicationDetails;
 }
 
 export default function ApplicationDetailsDialog({
@@ -53,7 +98,7 @@ export default function ApplicationDetailsDialog({
         <DialogHeader>
           <DialogTitle>Application Details</DialogTitle>
           <DialogDescription>
-            Application #{application.id} - {application.name}
+            Application #{application.id} - {application.personalInfo.fullName}
           </DialogDescription>
         </DialogHeader>
 
@@ -73,7 +118,7 @@ export default function ApplicationDetailsDialog({
                   <FileText className="mr-2 h-5 w-5" /> Application Summary
                 </CardTitle>
                 <CardDescription>
-                  Submitted on {formatDate(application.submissionDate)}
+                  Submitted on {formatDate(application.submittedAt)}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -84,7 +129,7 @@ export default function ApplicationDetailsDialog({
                   </div>
                   <div>
                     <h4 className="text-sm font-medium text-gray-500">Last Updated</h4>
-                    <p className="text-sm">{formatDate(application.lastUpdated)}</p>
+                    <p className="text-sm">{formatDate(application.submittedAt)}</p>
                   </div>
                   <div>
                     <h4 className="text-sm font-medium text-gray-500">Passport Type</h4>
@@ -131,7 +176,7 @@ export default function ApplicationDetailsDialog({
                     </div>
                     <div>
                       <p className="text-sm font-medium">Application Submitted</p>
-                      <p className="text-xs text-gray-500">{formatDate(application.submissionDate)}</p>
+                      <p className="text-xs text-gray-500">{formatDate(application.submittedAt)}</p>
                     </div>
                   </div>
                   
@@ -153,7 +198,7 @@ export default function ApplicationDetailsDialog({
                     </div>
                     <div>
                       <p className="text-sm font-medium">Last Updated</p>
-                      <p className="text-xs text-gray-500">{formatDate(application.lastUpdated)}</p>
+                      <p className="text-xs text-gray-500">{formatDate(application.submittedAt)}</p>
                     </div>
                   </div>
                 </div>
@@ -173,35 +218,35 @@ export default function ApplicationDetailsDialog({
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <h4 className="text-sm font-medium text-gray-500">Full Name</h4>
-                    <p className="text-sm">{application.name}</p>
+                    <p className="text-sm">{application.personalInfo.fullName}</p>
                   </div>
                   <div>
                     <h4 className="text-sm font-medium text-gray-500">Date of Birth</h4>
-                    <p className="text-sm">{application.dateOfBirth || "Not provided"}</p>
+                    <p className="text-sm">{application.personalInfo.dateOfBirth || "Not provided"}</p>
                   </div>
                   <div>
                     <h4 className="text-sm font-medium text-gray-500">Place of Birth</h4>
-                    <p className="text-sm">{application.placeOfBirth || "Not provided"}</p>
+                    <p className="text-sm">{application.personalInfo.placeOfBirth || "Not provided"}</p>
                   </div>
                   <div>
                     <h4 className="text-sm font-medium text-gray-500">Gender</h4>
-                    <p className="text-sm">{application.gender || "Not provided"}</p>
+                    <p className="text-sm">{application.personalInfo.gender || "Not provided"}</p>
                   </div>
                   <div>
-                    <h4 className="text-sm font-medium text-gray-500">Father's Name</h4>
-                    <p className="text-sm">{application.fatherName || "Not provided"}</p>
+                    <h4 className="text-sm font-medium text-gray-500">Father&apos;s Name</h4>
+                    <p className="text-sm">{application.personalInfo.fatherName || "Not provided"}</p>
                   </div>
                   <div>
-                    <h4 className="text-sm font-medium text-gray-500">Mother's Name</h4>
-                    <p className="text-sm">{application.motherName || "Not provided"}</p>
+                    <h4 className="text-sm font-medium text-gray-500">Mother&apos;s Name</h4>
+                    <p className="text-sm">{application.personalInfo.motherName || "Not provided"}</p>
                   </div>
                   <div>
                     <h4 className="text-sm font-medium text-gray-500">Marital Status</h4>
-                    <p className="text-sm">{application.maritalStatus || "Not provided"}</p>
+                    <p className="text-sm">{application.personalInfo.maritalStatus || "Not provided"}</p>
                   </div>
                   <div>
                     <h4 className="text-sm font-medium text-gray-500">Profession</h4>
-                    <p className="text-sm">{application.profession || "Not provided"}</p>
+                    <p className="text-sm">{application.personalInfo.profession || "Not provided"}</p>
                   </div>
                 </div>
 
@@ -210,13 +255,13 @@ export default function ApplicationDetailsDialog({
                 <div className="space-y-3">
                   <div>
                     <h4 className="text-sm font-medium text-gray-500">National ID Number</h4>
-                    <p className="text-sm">{application.nidNumber || "Not provided"}</p>
+                    <p className="text-sm">{application.personalInfo.nid || "Not provided"}</p>
                   </div>
                   
-                  {application.birthCertificateNumber && (
+                  {application.personalInfo.birthCertificateNumber && (
                     <div>
                       <h4 className="text-sm font-medium text-gray-500">Birth Certificate Number</h4>
-                      <p className="text-sm">{application.birthCertificateNumber}</p>
+                      <p className="text-sm">{application.personalInfo.birthCertificateNumber}</p>
                     </div>
                   )}
                 </div>
@@ -236,11 +281,11 @@ export default function ApplicationDetailsDialog({
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <h4 className="text-sm font-medium text-gray-500">Phone Number</h4>
-                    <p className="text-sm">{application.phone || "Not provided"}</p>
+                    <p className="text-sm">{application.personalInfo.phone || "Not provided"}</p>
                   </div>
                   <div>
                     <h4 className="text-sm font-medium text-gray-500">Email Address</h4>
-                    <p className="text-sm">{application.email || "Not provided"}</p>
+                    <p className="text-sm">{application.personalInfo.email || "Not provided"}</p>
                   </div>
                 </div>
 
@@ -249,7 +294,7 @@ export default function ApplicationDetailsDialog({
                     <MapPin className="mr-1 h-4 w-4" /> Present Address
                   </h3>
                   <p className="text-sm">
-                    {application.presentAddress || "Not provided"}
+                    {application.personalInfo.presentAddress || "Not provided"}
                   </p>
                 </div>
 
@@ -258,27 +303,31 @@ export default function ApplicationDetailsDialog({
                     <MapPin className="mr-1 h-4 w-4" /> Permanent Address
                   </h3>
                   <p className="text-sm">
-                    {application.permanentAddress || "Not provided"}
+                    {application.personalInfo.permanentAddress || "Not provided"}
                   </p>
                 </div>
 
-                {application.emergencyContact && (
+                {application.personalInfo.emergencyContact && (
                   <div>
                     <h3 className="text-sm font-medium flex items-center mb-2">
                       <Phone className="mr-1 h-4 w-4" /> Emergency Contact
                     </h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <h4 className="text-sm font-medium text-gray-500">Name</h4>
-                        <p className="text-sm">{application.emergencyContact.name || "Not provided"}</p>
+                        <h4 className="text-sm font-medium text-gray-500">Emergency Contact Name</h4>
+                        <p className="text-sm">{application.personalInfo.emergencyContact.name || "Not provided"}</p>
                       </div>
                       <div>
                         <h4 className="text-sm font-medium text-gray-500">Relationship</h4>
-                        <p className="text-sm">{application.emergencyContact.relationship || "Not provided"}</p>
+                        <p className="text-sm">{application.personalInfo.emergencyContact.relationship || "Not provided"}</p>
                       </div>
                       <div>
-                        <h4 className="text-sm font-medium text-gray-500">Phone Number</h4>
-                        <p className="text-sm">{application.emergencyContact.phone || "Not provided"}</p>
+                        <h4 className="text-sm font-medium text-gray-500">Emergency Contact Phone</h4>
+                        <p className="text-sm">{application.personalInfo.emergencyContact.phone || "Not provided"}</p>
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-medium text-gray-500">Emergency Contact Address</h4>
+                        <p className="text-sm">{application.personalInfo.emergencyContact.address || "Not provided"}</p>
                       </div>
                     </div>
                   </div>
@@ -303,7 +352,7 @@ export default function ApplicationDetailsDialog({
                   </div>
                   <div>
                     <h4 className="text-sm font-medium text-gray-500">Application Reason</h4>
-                    <p className="text-sm">{application.applicationReason || "New"}</p>
+                    <p className="text-sm">{application.personalInfo.applicationReason || "New"}</p>
                   </div>
                   <div>
                     <h4 className="text-sm font-medium text-gray-500">Delivery Option</h4>
@@ -311,26 +360,26 @@ export default function ApplicationDetailsDialog({
                   </div>
                 </div>
 
-                {application.oldPassportNumber && (
+                {application.personalInfo.oldPassportNumber && (
                   <>
                     <Separator className="my-2" />
                     <div>
                       <h3 className="text-sm font-medium mb-2">Previous Passport Details</h3>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <h4 className="text-sm font-medium text-gray-500">Passport Number</h4>
-                          <p className="text-sm">{application.oldPassportNumber}</p>
+                          <h4 className="text-sm font-medium text-gray-500">Previous Passport Number</h4>
+                          <p className="text-sm">{application.personalInfo.oldPassportNumber}</p>
                         </div>
-                        {application.oldPassportIssueDate && (
+                        {application.personalInfo.oldPassportIssueDate && (
                           <div>
                             <h4 className="text-sm font-medium text-gray-500">Issue Date</h4>
-                            <p className="text-sm">{formatDate(application.oldPassportIssueDate)}</p>
+                            <p className="text-sm">{formatDate(application.personalInfo.oldPassportIssueDate)}</p>
                           </div>
                         )}
-                        {application.oldPassportExpiryDate && (
+                        {application.personalInfo.oldPassportExpiryDate && (
                           <div>
                             <h4 className="text-sm font-medium text-gray-500">Expiry Date</h4>
-                            <p className="text-sm">{formatDate(application.oldPassportExpiryDate)}</p>
+                            <p className="text-sm">{formatDate(application.personalInfo.oldPassportExpiryDate)}</p>
                           </div>
                         )}
                       </div>
