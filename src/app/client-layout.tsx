@@ -1,5 +1,6 @@
 "use client";
 
+import { ChatHead } from "@/components/chat/chat-head";
 import Footer from "@/components/footer";
 import Navbar from "@/components/navbar";
 import { usePathname } from "next/navigation";
@@ -21,6 +22,8 @@ export default function ClientLayout({
         {children}
       </main>
       {!isDashboardOrAdmin && <Footer />}
+      {/* Chat Head - shown on all pages */}
+      <ChatHead />
     </>
   );
 } 
